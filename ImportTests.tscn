@@ -1,0 +1,259 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://RobotBox.gd" type="Script" id=1]
+[ext_resource path="res://RobotBoxPositionHelper.gd" type="Script" id=2]
+[ext_resource path="res://SimulatorClient.gd" type="Script" id=3]
+[ext_resource path="res://RobotRuler.gd" type="Script" id=4]
+[ext_resource path="res://MassReadout.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Wheel.tscn" type="PackedScene" id=6]
+
+[sub_resource type="CubeMesh" id=1]
+
+[sub_resource type="SpatialMaterial" id=2]
+albedo_color = Color( 0.25098, 0.25098, 0.25098, 1 )
+
+[sub_resource type="ConvexPolygonShape" id=3]
+points = PoolVector3Array( -1, 1, 1, 1, 1, -1, 1, 1, 1, -1, 1, -1, -1, -1, 1, 1, -1, -1, 1, -1, 1, -1, -1, -1, 1, 1, 1, -1, 1, -1, 1, 1, -1, -1, 1, 1, 1, -1, 1, -1, -1, -1, 1, -1, -1, -1, -1, 1, 1, 1, 1, -1, -1, 1, -1, 1, 1, 1, -1, 1, 1, 1, -1, -1, -1, -1, -1, 1, -1, 1, -1, -1 )
+
+[sub_resource type="CubeMesh" id=4]
+
+[sub_resource type="BoxShape" id=5]
+extents = Vector3( 0.0381, 0.0254, 0.390525 )
+
+[sub_resource type="CubeMesh" id=6]
+
+[sub_resource type="BoxShape" id=7]
+extents = Vector3( 0.3429, 0.0254, 0.0127 )
+
+[node name="Spatial" type="Spatial"]
+script = ExtResource( 3 )
+
+[node name="Scenery" type="Spatial" parent="."]
+
+[node name="Floor" type="StaticBody" parent="Scenery"]
+transform = Transform( 9.92921, 0, 0, 0, -4.37114e-08, 1, 0, -6.34889, -2.77519e-07, 0, -1.0009, 0 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Scenery/Floor"]
+transform = Transform( 1, 0, 0, 0, 0.999999, -6.03961e-14, 0, 7.10543e-15, 1, 0, 0, 0 )
+mesh = SubResource( 1 )
+material/0 = SubResource( 2 )
+
+[node name="CollisionShape" type="CollisionShape" parent="Scenery/Floor"]
+shape = SubResource( 3 )
+
+[node name="Block" type="StaticBody" parent="Scenery"]
+transform = Transform( 1.30185, 0.348201, 5.06507e-09, 0, -7.58615e-08, 0.577548, 0.266617, -1.70022, -2.47321e-08, -3.23865, 0.420038, -0.97566 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Scenery/Block"]
+transform = Transform( 1, 0, -6.3573e-08, 0, 1, -2.66454e-14, 6.3573e-08, 2.84217e-14, 1, 0, -5.96046e-08, 0 )
+mesh = SubResource( 1 )
+material/0 = SubResource( 2 )
+
+[node name="CollisionShape" type="CollisionShape" parent="Scenery/Block"]
+transform = Transform( -1, 9.95198e-22, 1.50996e-07, 4.60382e-21, 1, 2.38988e-14, -1.50996e-07, 2.38988e-14, -1, 0, -8.74634e-08, 0 )
+shape = SubResource( 3 )
+
+[node name="Ramp" type="StaticBody" parent="Scenery"]
+transform = Transform( 0.249102, 1.65997, 0.065779, -0.00972223, -0.200156, 0.573662, 0.892998, -0.465227, -0.0121035, 2.97965, -0.471461, -0.729839 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Scenery/Ramp"]
+transform = Transform( 1, 0, -6.3573e-08, 0, 1, -2.66454e-14, 6.3573e-08, 2.84217e-14, 1, 0, -5.96046e-08, 0 )
+mesh = SubResource( 1 )
+material/0 = SubResource( 2 )
+
+[node name="CollisionShape" type="CollisionShape" parent="Scenery/Ramp"]
+transform = Transform( -1, 9.95198e-22, 1.50996e-07, 4.60382e-21, 1, 2.38988e-14, -1.50996e-07, 2.38988e-14, -1, 0, -8.74634e-08, 0 )
+shape = SubResource( 3 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( 0.253334, -0.857619, 0.447562, 0.344187, 0.512289, 0.786826, -0.904078, -0.0452852, 0.424961, 3.52523, 5.18887, 1.21273 )
+shadow_enabled = true
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.860458, 0.509522, 0, -0.509522, 0.860458, 0, 1.20769, 2.374 )
+
+[node name="Chassis" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+
+[node name="LeftDriveRail" type="RigidBody" parent="Chassis"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.241, 0, 0 )
+mass = 1.66887
+can_sleep = false
+script = ExtResource( 1 )
+width_inches = 3.0
+height_inches = 2.0
+depth_inches = 30.75
+
+[node name="Mesh" type="MeshInstance" parent="Chassis/LeftDriveRail"]
+transform = Transform( 0.0381, 0, 0, 0, 0.0254, 0, 0, 0, 0.390525, 0, 0, 0 )
+mesh = SubResource( 4 )
+material/0 = null
+
+[node name="Collider" type="CollisionShape" parent="Chassis/LeftDriveRail"]
+shape = SubResource( 5 )
+
+[node name="RobotBoxPositionHelper" type="Spatial" parent="Chassis/LeftDriveRail"]
+transform = Transform( 1, 2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0, 1, -0.0381, 0.0254, 0 )
+script = ExtResource( 2 )
+x_position = 0
+y_position = 2
+
+[node name="MassReadout" parent="Chassis/LeftDriveRail" instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.241, 0.407911, 0 )
+root = NodePath("../..")
+
+[node name="RightDriveRail" type="RigidBody" parent="Chassis"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.241, 0, 0 )
+mass = 1.66887
+can_sleep = false
+script = ExtResource( 1 )
+width_inches = 3.0
+height_inches = 2.0
+depth_inches = 30.75
+
+[node name="Mesh" type="MeshInstance" parent="Chassis/RightDriveRail"]
+transform = Transform( 0.0381, 0, 0, 0, 0.0254, 0, 0, 0, 0.390525, 0, 0, 0 )
+mesh = SubResource( 4 )
+material/0 = null
+
+[node name="Collider" type="CollisionShape" parent="Chassis/RightDriveRail"]
+shape = SubResource( 5 )
+
+[node name="RobotBoxPositionHelper" type="Spatial" parent="Chassis/RightDriveRail"]
+transform = Transform( 1, 2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0, 1, 0.0381, 0.0254, 0 )
+script = ExtResource( 2 )
+x_position = 2
+y_position = 2
+
+[node name="DriveRailSpacing" type="Spatial" parent="Chassis"]
+script = ExtResource( 4 )
+node_a = NodePath("../RightDriveRail/RobotBoxPositionHelper")
+node_b = NodePath("../LeftDriveRail/RobotBoxPositionHelper")
+
+[node name="FrontDriveRail" type="RigidBody" parent="Chassis"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.403 )
+mass = 0.835817
+can_sleep = false
+script = ExtResource( 1 )
+width_inches = 27.0
+height_inches = 2.0
+depth_inches = 1.0
+
+[node name="Mesh" type="MeshInstance" parent="Chassis/FrontDriveRail"]
+transform = Transform( 0.3429, 0, 0, 0, 0.0254, 0, 0, 0, 0.0127, 0, 0, 0 )
+mesh = SubResource( 6 )
+material/0 = null
+
+[node name="Collider" type="CollisionShape" parent="Chassis/FrontDriveRail"]
+shape = SubResource( 7 )
+
+[node name="BackDriveRail" type="RigidBody" parent="Chassis"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.403 )
+mass = 0.835817
+can_sleep = false
+script = ExtResource( 1 )
+width_inches = 27.0
+height_inches = 2.0
+depth_inches = 1.0
+
+[node name="Mesh" type="MeshInstance" parent="Chassis/BackDriveRail"]
+transform = Transform( 0.3429, 0, 0, 0, 0.0254, 0, 0, 0, 0.0127, 0, 0, 0 )
+mesh = SubResource( 6 )
+material/0 = null
+
+[node name="Collider" type="CollisionShape" parent="Chassis/BackDriveRail"]
+shape = SubResource( 7 )
+
+[node name="Wheels" type="Spatial" parent="Chassis"]
+
+[node name="Left" type="Spatial" parent="Chassis/Wheels"]
+transform = Transform( 1, 2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0, 1, 0.2791, 0, 0.390525 )
+script = ExtResource( 2 )
+x_position = 2
+z_position = 2
+box = NodePath("../../LeftDriveRail")
+
+[node name="LeftFront" parent="Chassis/Wheels/Left" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.031158, 0, -0.083 )
+motor_id = 15
+
+[node name="LeftMiddle" parent="Chassis/Wheels/Left" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.031, -0.002, -0.349 )
+motor_id = 15
+
+[node name="LeftBack" parent="Chassis/Wheels/Left" instance=ExtResource( 6 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.031, 0, -0.699 )
+motor_id = 15
+
+[node name="Front2Rail" type="Generic6DOFJoint" parent="Chassis/Wheels/Left"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.083 )
+nodes/node_a = NodePath("../LeftFront")
+nodes/node_b = NodePath("../../../LeftDriveRail")
+
+[node name="Middle2Rail" type="Generic6DOFJoint" parent="Chassis/Wheels/Left"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.00199997, -0.349 )
+nodes/node_a = NodePath("../LeftMiddle")
+nodes/node_b = NodePath("../../../LeftDriveRail")
+
+[node name="Back2Rail" type="Generic6DOFJoint" parent="Chassis/Wheels/Left"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.699 )
+nodes/node_a = NodePath("../LeftBack")
+nodes/node_b = NodePath("../../../LeftDriveRail")
+
+[node name="Right" type="Spatial" parent="Chassis/Wheels"]
+transform = Transform( 1, 2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0, 1, -0.2791, 0, 0.390525 )
+script = ExtResource( 2 )
+x_position = 0
+z_position = 2
+box = NodePath("../../RightDriveRail")
+
+[node name="RightFront" parent="Chassis/Wheels/Right" instance=ExtResource( 6 )]
+transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, -0.031, 0, -0.083 )
+motor_id = 16
+
+[node name="RightMiddle" parent="Chassis/Wheels/Right" instance=ExtResource( 6 )]
+transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, -0.031, -0.00199997, -0.349 )
+motor_id = 16
+
+[node name="RightBack" parent="Chassis/Wheels/Right" instance=ExtResource( 6 )]
+transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, -0.031, 0, -0.699 )
+motor_id = 16
+
+[node name="Front2Rail" type="Generic6DOFJoint" parent="Chassis/Wheels/Right"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.083 )
+nodes/node_a = NodePath("../RightFront")
+nodes/node_b = NodePath("../../../RightDriveRail")
+
+[node name="Middle2Rail" type="Generic6DOFJoint" parent="Chassis/Wheels/Right"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.00199997, -0.349 )
+nodes/node_a = NodePath("../RightMiddle")
+nodes/node_b = NodePath("../../../RightDriveRail")
+
+[node name="Back2Rail" type="Generic6DOFJoint" parent="Chassis/Wheels/Right"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.699 )
+nodes/node_a = NodePath("../RightBack")
+nodes/node_b = NodePath("../../../RightDriveRail")
+
+[node name="Constraints" type="Spatial" parent="Chassis"]
+
+[node name="DriveRails" type="Spatial" parent="Chassis/Constraints"]
+
+[node name="Left2Front" type="Generic6DOFJoint" parent="Chassis/Constraints/DriveRails"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24132, 0, 0.38904 )
+nodes/node_a = NodePath("../../../LeftDriveRail")
+nodes/node_b = NodePath("../../../FrontDriveRail")
+
+[node name="Right2Front" type="Generic6DOFJoint" parent="Chassis/Constraints/DriveRails"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.242449, 0, 0.38904 )
+nodes/node_a = NodePath("../../../RightDriveRail")
+nodes/node_b = NodePath("../../../FrontDriveRail")
+
+[node name="Left2Back" type="Generic6DOFJoint" parent="Chassis/Constraints/DriveRails"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24132, 0, -0.385746 )
+nodes/node_a = NodePath("../../../LeftDriveRail")
+nodes/node_b = NodePath("../../../BackDriveRail")
+
+[node name="Right2Back" type="Generic6DOFJoint" parent="Chassis/Constraints/DriveRails"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.242449, 0, -0.385746 )
+nodes/node_a = NodePath("../../../RightDriveRail")
+nodes/node_b = NodePath("../../../BackDriveRail")
