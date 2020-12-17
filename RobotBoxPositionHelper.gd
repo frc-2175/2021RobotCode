@@ -10,7 +10,7 @@ export(int, "Back", "Center", "Front") var z_position = 1
 export(NodePath) var box
 
 func _editor_process():
-	var _box: RobotBox = get_node(box) if box else get_parent()
+	var _box = get_node(box) if box else get_parent()
 	var w = Math.in2m(_box.width_inches)
 	var h = Math.in2m(_box.height_inches)
 	var d = Math.in2m(_box.depth_inches)
