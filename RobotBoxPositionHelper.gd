@@ -11,9 +11,9 @@ export(NodePath) var box
 
 func _editor_process():
 	var _box = get_node(box) if box else get_parent()
-	var w = Math.in2m(_box.width_inches)
-	var h = Math.in2m(_box.height_inches)
-	var d = Math.in2m(_box.depth_inches)
+	var w = Math.length2m(_box.width, _box.unit)
+	var h = Math.length2m(_box.height, _box.unit)
+	var d = Math.length2m(_box.depth, _box.unit)
 	
 	self.global_transform.origin = _box.global_transform.origin + Vector3(
 		w/2 * (x_position-1),
