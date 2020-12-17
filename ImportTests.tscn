@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://RobotBoxPositionHelper.gd" type="Script" id=2]
 [ext_resource path="res://SimulatorClient.gd" type="Script" id=3]
@@ -29,6 +29,11 @@ extents = Vector3( 0.3429, 0.0254, 0.0127 )
 extents = Vector3( 0.2795, 0.001, 0.416 )
 
 [sub_resource type="CubeMesh" id=9]
+
+[sub_resource type="BoxShape" id=10]
+extents = Vector3( 0.0127, 0.0254, 0.17145 )
+
+[sub_resource type="CubeMesh" id=11]
 
 [node name="Spatial" type="Spatial"]
 script = ExtResource( 3 )
@@ -86,6 +91,7 @@ can_sleep = false
 
 [node name="MassReadout" parent="Robot/Chassis" instance=ExtResource( 5 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.407911, 0 )
+root = NodePath("../..")
 
 [node name="LeftDriveRail" type="CollisionShape" parent="Robot/Chassis"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.241, 0, 0 )
@@ -239,3 +245,51 @@ nodes/node_b = NodePath("../../../Chassis")
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.699 )
 nodes/node_a = NodePath("../Back")
 nodes/node_b = NodePath("../../../Chassis")
+
+[node name="Intake" type="Spatial" parent="Robot"]
+
+[node name="BotFront" type="Spatial" parent="Robot/Intake"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.4157 )
+script = ExtResource( 2 )
+z_position = 2
+box = NodePath("../../Chassis/FrontDriveRail")
+
+[node name="ArmPosition" type="Spatial" parent="Robot/Intake/BotFront"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.101, -0.17 )
+
+[node name="Arm" type="RigidBody" parent="Robot/Intake/BotFront/ArmPosition"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.146 )
+mass = 0.850335
+can_sleep = false
+
+[node name="Left" type="CollisionShape" parent="Robot/Intake/BotFront/ArmPosition/Arm"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.241, 0, 0 )
+shape = SubResource( 10 )
+script = ExtResource( 7 )
+width = 1.0
+height = 2.0
+depth = 13.5
+
+[node name="Mesh" type="MeshInstance" parent="Robot/Intake/BotFront/ArmPosition/Arm/Left"]
+transform = Transform( 0.0127, 0, 0, 0, 0.0254, 0, 0, 0, 0.17145, 0, 0, 0 )
+mesh = SubResource( 11 )
+material/0 = null
+
+[node name="Right" type="CollisionShape" parent="Robot/Intake/BotFront/ArmPosition/Arm"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.241, 0, 0 )
+shape = SubResource( 10 )
+script = ExtResource( 7 )
+width = 1.0
+height = 2.0
+depth = 13.5
+
+[node name="Mesh" type="MeshInstance" parent="Robot/Intake/BotFront/ArmPosition/Arm/Right"]
+transform = Transform( 0.0127, 0, 0, 0, 0.0254, 0, 0, 0, 0.17145, 0, 0, 0 )
+mesh = SubResource( 11 )
+material/0 = null
+
+[node name="Arm2Chassis" type="HingeJoint" parent="Robot/Intake/BotFront/ArmPosition"]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0 )
+nodes/node_a = NodePath("../Arm")
+nodes/node_b = NodePath("../../../../Chassis")
+collision/exclude_nodes = false
