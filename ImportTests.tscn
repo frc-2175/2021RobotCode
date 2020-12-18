@@ -1,11 +1,13 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=28 format=2]
 
+[ext_resource path="res://RobotCylinder.gd" type="Script" id=1]
 [ext_resource path="res://RobotBoxPositionHelper.gd" type="Script" id=2]
 [ext_resource path="res://SimulatorClient.gd" type="Script" id=3]
 [ext_resource path="res://RobotRuler.gd" type="Script" id=4]
 [ext_resource path="res://MassReadout.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Wheel.tscn" type="PackedScene" id=6]
 [ext_resource path="res://RobotBox.gd" type="Script" id=7]
+[ext_resource path="res://RobotPiston.gd" type="Script" id=8]
 
 [sub_resource type="CubeMesh" id=1]
 
@@ -31,9 +33,31 @@ extents = Vector3( 0.2795, 0.001, 0.416 )
 [sub_resource type="CubeMesh" id=9]
 
 [sub_resource type="BoxShape" id=10]
-extents = Vector3( 0.0127, 0.0254, 0.17145 )
+extents = Vector3( 0.0254, 0.0254, 0.0127 )
 
 [sub_resource type="CubeMesh" id=11]
+
+[sub_resource type="BoxShape" id=12]
+extents = Vector3( 0.0127, 0.0254, 0.17145 )
+
+[sub_resource type="CubeMesh" id=13]
+
+[sub_resource type="BoxShape" id=14]
+extents = Vector3( 0.0127, 0.0381, 0.0254 )
+
+[sub_resource type="CubeMesh" id=15]
+
+[sub_resource type="CylinderMesh" id=16]
+
+[sub_resource type="CylinderShape" id=17]
+radius = 0.0127
+height = 0.1524
+
+[sub_resource type="CylinderMesh" id=18]
+
+[sub_resource type="CylinderShape" id=19]
+radius = 0.00635
+height = 0.1778
 
 [node name="Spatial" type="Spatial"]
 script = ExtResource( 3 )
@@ -86,7 +110,7 @@ transform = Transform( 1, 0, 0, 0, 0.860458, 0.509522, 0, -0.509522, 0.860458, 0
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
 
 [node name="Chassis" type="RigidBody" parent="Robot"]
-mass = 7.52085
+mass = 7.82227
 can_sleep = false
 
 [node name="MassReadout" parent="Robot/Chassis" instance=ExtResource( 5 )]
@@ -176,6 +200,58 @@ transform = Transform( 0.2795, 0, 0, 0, 0.001, 0, 0, 0, 0.416, 0, 0, 0 )
 mesh = SubResource( 9 )
 material/0 = null
 
+[node name="LeftIntakeHardStop" type="CollisionShape" parent="Robot/Chassis"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24079, 0.0481884, 0.342451 )
+shape = SubResource( 10 )
+script = ExtResource( 7 )
+width = 1.0
+height = 2.0
+depth = 2.0
+
+[node name="Mesh" type="MeshInstance" parent="Robot/Chassis/LeftIntakeHardStop"]
+transform = Transform( 0.0127, 0, 0, 0, 0.0254, 0, 0, 0, 0.0254, 0, 0, 0 )
+mesh = SubResource( 11 )
+material/0 = null
+
+[node name="LeftIntakeHardStop2" type="CollisionShape" parent="Robot/Chassis"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24079, 0.0481886, 0.195431 )
+shape = SubResource( 10 )
+script = ExtResource( 7 )
+width = 2.0
+height = 2.0
+depth = 1.0
+
+[node name="Mesh" type="MeshInstance" parent="Robot/Chassis/LeftIntakeHardStop2"]
+transform = Transform( 0.0254, 0, 0, 0, 0.0254, 0, 0, 0, 0.0127, 0, 0, 0 )
+mesh = SubResource( 11 )
+material/0 = null
+
+[node name="RightIntakeHardStop" type="CollisionShape" parent="Robot/Chassis"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.241, 0.048, 0.342 )
+shape = SubResource( 10 )
+script = ExtResource( 7 )
+width = 1.0
+height = 2.0
+depth = 2.0
+
+[node name="Mesh" type="MeshInstance" parent="Robot/Chassis/RightIntakeHardStop"]
+transform = Transform( 0.0127, 0, 0, 0, 0.0254, 0, 0, 0, 0.0254, 0, 0, 0 )
+mesh = SubResource( 11 )
+material/0 = null
+
+[node name="RightIntakeHardStop2" type="CollisionShape" parent="Robot/Chassis"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.241, 0.0480001, 0.194981 )
+shape = SubResource( 10 )
+script = ExtResource( 7 )
+width = 2.0
+height = 2.0
+depth = 1.0
+
+[node name="Mesh" type="MeshInstance" parent="Robot/Chassis/RightIntakeHardStop2"]
+transform = Transform( 0.0254, 0, 0, 0, 0.0254, 0, 0, 0, 0.0127, 0, 0, 0 )
+mesh = SubResource( 11 )
+material/0 = null
+
 [node name="Wheels" type="Spatial" parent="Robot"]
 
 [node name="Left" type="Spatial" parent="Robot/Wheels"]
@@ -255,16 +331,16 @@ z_position = 2
 box = NodePath("../../Chassis/FrontDriveRail")
 
 [node name="ArmPosition" type="Spatial" parent="Robot/Intake/BotFront"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.101, -0.17 )
+transform = Transform( 1, 0, 0, 0, 0.26074, 0.965409, 0, -0.965409, 0.26074, 0, 0.101, -0.17 )
 
 [node name="Arm" type="RigidBody" parent="Robot/Intake/BotFront/ArmPosition"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.146 )
-mass = 0.850335
+mass = 1.06188
 can_sleep = false
 
 [node name="Left" type="CollisionShape" parent="Robot/Intake/BotFront/ArmPosition/Arm"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.241, 0, 0 )
-shape = SubResource( 10 )
+shape = SubResource( 12 )
 script = ExtResource( 7 )
 width = 1.0
 height = 2.0
@@ -272,12 +348,25 @@ depth = 13.5
 
 [node name="Mesh" type="MeshInstance" parent="Robot/Intake/BotFront/ArmPosition/Arm/Left"]
 transform = Transform( 0.0127, 0, 0, 0, 0.0254, 0, 0, 0, 0.17145, 0, 0, 0 )
-mesh = SubResource( 11 )
+mesh = SubResource( 13 )
+material/0 = null
+
+[node name="LeftPistonAnchor" type="CollisionShape" parent="Robot/Intake/BotFront/ArmPosition/Arm"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.241, 0.060042, -0.145981 )
+shape = SubResource( 14 )
+script = ExtResource( 7 )
+width = 1.0
+height = 3.0
+depth = 2.0
+
+[node name="Mesh" type="MeshInstance" parent="Robot/Intake/BotFront/ArmPosition/Arm/LeftPistonAnchor"]
+transform = Transform( 0.0127, 0, 0, 0, 0.0381, 0, 0, 0, 0.0254, 0, 0, 0 )
+mesh = SubResource( 15 )
 material/0 = null
 
 [node name="Right" type="CollisionShape" parent="Robot/Intake/BotFront/ArmPosition/Arm"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.241, 0, 0 )
-shape = SubResource( 10 )
+shape = SubResource( 12 )
 script = ExtResource( 7 )
 width = 1.0
 height = 2.0
@@ -285,7 +374,20 @@ depth = 13.5
 
 [node name="Mesh" type="MeshInstance" parent="Robot/Intake/BotFront/ArmPosition/Arm/Right"]
 transform = Transform( 0.0127, 0, 0, 0, 0.0254, 0, 0, 0, 0.17145, 0, 0, 0 )
-mesh = SubResource( 11 )
+mesh = SubResource( 13 )
+material/0 = null
+
+[node name="RightPistonAnchor" type="CollisionShape" parent="Robot/Intake/BotFront/ArmPosition/Arm"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.241, 0.06, -0.146 )
+shape = SubResource( 14 )
+script = ExtResource( 7 )
+width = 1.0
+height = 3.0
+depth = 2.0
+
+[node name="Mesh" type="MeshInstance" parent="Robot/Intake/BotFront/ArmPosition/Arm/RightPistonAnchor"]
+transform = Transform( 0.0127, 0, 0, 0, 0.0381, 0, 0, 0, 0.0254, 0, 0, 0 )
+mesh = SubResource( 15 )
 material/0 = null
 
 [node name="Arm2Chassis" type="HingeJoint" parent="Robot/Intake/BotFront/ArmPosition"]
@@ -293,3 +395,144 @@ transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0
 nodes/node_a = NodePath("../Arm")
 nodes/node_b = NodePath("../../../../Chassis")
 collision/exclude_nodes = false
+
+[node name="Pistons" type="Spatial" parent="Robot/Intake/BotFront"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.066, -0.444 )
+
+[node name="Left" type="Spatial" parent="Robot/Intake/BotFront/Pistons"]
+transform = Transform( 1, 0, 0, 0, 0.317669, -0.948202, 0, 0.948202, 0.317669, 0.241, 0, 0 )
+script = ExtResource( 8 )
+radius_inches = 0.5
+length_inches = 6.0
+
+[node name="Base" type="RigidBody" parent="Robot/Intake/BotFront/Pistons/Left"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0762, 0 )
+mass = 0.156375
+can_sleep = false
+script = ExtResource( 1 )
+radius_inches = 0.5
+length_inches = 6.0
+
+[node name="SliderJoint" type="SliderJoint" parent="Robot/Intake/BotFront/Pistons/Left/Base"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0.0254, 0 )
+nodes/node_a = NodePath("../../Base")
+nodes/node_b = NodePath("../../Rod")
+linear_limit/upper_distance = 0.15
+linear_limit/lower_distance = 0.0
+angular_limit/upper_angle = 180.0
+angular_limit/lower_angle = -180.0
+
+[node name="Mesh" type="MeshInstance" parent="Robot/Intake/BotFront/Pistons/Left/Base"]
+transform = Transform( 0.0127, 0, 0, 0, 0.0762, 0, 0, 0, 0.0127, 0, 0, 0 )
+mesh = SubResource( 16 )
+material/0 = null
+
+[node name="Collider" type="CollisionShape" parent="Robot/Intake/BotFront/Pistons/Left/Base"]
+shape = SubResource( 17 )
+
+[node name="Start" type="Spatial" parent="Robot/Intake/BotFront/Pistons/Left/Base"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0762, 0 )
+
+[node name="End" type="Spatial" parent="Robot/Intake/BotFront/Pistons/Left/Base"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0762, 0 )
+
+[node name="Rod" type="RigidBody" parent="Robot/Intake/BotFront/Pistons/Left"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1016, 0 )
+mass = 0.0608125
+can_sleep = false
+script = ExtResource( 1 )
+radius_inches = 0.25
+length_inches = 7.0
+
+[node name="Mesh" type="MeshInstance" parent="Robot/Intake/BotFront/Pistons/Left/Rod"]
+transform = Transform( 0.00635, 0, 0, 0, 0.0889, 0, 0, 0, 0.00635, 0, 0, 0 )
+mesh = SubResource( 18 )
+material/0 = null
+
+[node name="Collider" type="CollisionShape" parent="Robot/Intake/BotFront/Pistons/Left/Rod"]
+shape = SubResource( 19 )
+
+[node name="Start" type="Spatial" parent="Robot/Intake/BotFront/Pistons/Left/Rod"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0889, 0 )
+
+[node name="End" type="Spatial" parent="Robot/Intake/BotFront/Pistons/Left/Rod"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0889, 0 )
+
+[node name="Rod2Arm" type="HingeJoint" parent="Robot/Intake/BotFront/Pistons/Left/Rod/End"]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 8.88178e-16, -1, 0, -4.37114e-08, 0, 0, 0 )
+nodes/node_a = NodePath("../..")
+nodes/node_b = NodePath("../../../../../ArmPosition/Arm")
+
+[node name="Right" type="Spatial" parent="Robot/Intake/BotFront/Pistons"]
+transform = Transform( 1, 0, 0, 0, 0.317669, -0.948202, 0, 0.948202, 0.317669, -0.241, 0, 0 )
+script = ExtResource( 8 )
+radius_inches = 0.5
+length_inches = 6.0
+
+[node name="Base" type="RigidBody" parent="Robot/Intake/BotFront/Pistons/Right"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0762, 0 )
+mass = 0.156375
+can_sleep = false
+script = ExtResource( 1 )
+radius_inches = 0.5
+length_inches = 6.0
+
+[node name="SliderJoint" type="SliderJoint" parent="Robot/Intake/BotFront/Pistons/Right/Base"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0.0254, 0 )
+nodes/node_a = NodePath("../../Base")
+nodes/node_b = NodePath("../../Rod")
+linear_limit/upper_distance = 0.15
+linear_limit/lower_distance = 0.0
+angular_limit/upper_angle = 180.0
+angular_limit/lower_angle = -180.0
+
+[node name="Mesh" type="MeshInstance" parent="Robot/Intake/BotFront/Pistons/Right/Base"]
+transform = Transform( 0.0127, 0, 0, 0, 0.0762, 0, 0, 0, 0.0127, 0, 0, 0 )
+mesh = SubResource( 16 )
+material/0 = null
+
+[node name="Collider" type="CollisionShape" parent="Robot/Intake/BotFront/Pistons/Right/Base"]
+shape = SubResource( 17 )
+
+[node name="Start" type="Spatial" parent="Robot/Intake/BotFront/Pistons/Right/Base"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0762, 0 )
+
+[node name="End" type="Spatial" parent="Robot/Intake/BotFront/Pistons/Right/Base"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0762, 0 )
+
+[node name="Rod" type="RigidBody" parent="Robot/Intake/BotFront/Pistons/Right"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1016, 0 )
+mass = 0.0608125
+can_sleep = false
+script = ExtResource( 1 )
+radius_inches = 0.25
+length_inches = 7.0
+
+[node name="Mesh" type="MeshInstance" parent="Robot/Intake/BotFront/Pistons/Right/Rod"]
+transform = Transform( 0.00635, 0, 0, 0, 0.0889, 0, 0, 0, 0.00635, 0, 0, 0 )
+mesh = SubResource( 18 )
+material/0 = null
+
+[node name="Collider" type="CollisionShape" parent="Robot/Intake/BotFront/Pistons/Right/Rod"]
+shape = SubResource( 19 )
+
+[node name="Start" type="Spatial" parent="Robot/Intake/BotFront/Pistons/Right/Rod"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0889, 0 )
+
+[node name="End" type="Spatial" parent="Robot/Intake/BotFront/Pistons/Right/Rod"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0889, 0 )
+
+[node name="Rod2Arm" type="HingeJoint" parent="Robot/Intake/BotFront/Pistons/Right/Rod/End"]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 8.88178e-16, -1, 0, -4.37114e-08, 0, 0, 0 )
+nodes/node_a = NodePath("../..")
+nodes/node_b = NodePath("../../../../../ArmPosition/Arm")
+
+[node name="Chassis2Left" type="HingeJoint" parent="Robot/Intake/BotFront/Pistons"]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.241, 0, 0 )
+nodes/node_a = NodePath("../../../../Chassis")
+nodes/node_b = NodePath("../Left/Base")
+
+[node name="Chassis2Right" type="HingeJoint" parent="Robot/Intake/BotFront/Pistons"]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -0.241, 0, 0 )
+nodes/node_a = NodePath("../../../../Chassis")
+nodes/node_b = NodePath("../Right/Base")

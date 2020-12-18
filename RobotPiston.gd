@@ -11,7 +11,7 @@ onready var sim: Node = get_node("/root/Spatial")
 onready var _piston_base: RigidBody = $Base
 onready var _piston_rod: RigidBody = $Rod
 
-var psi = 1 # TODO: 60 plz
+var psi = 3 # TODO: 60 plz
 var psi2newtonsPerSquareMeter = 6895
 var pressureAreaSquareMeters = PI*Math.in2m(radius_inches)*Math.in2m(radius_inches)
 var force = psi * psi2newtonsPerSquareMeter * pressureAreaSquareMeters
@@ -41,16 +41,15 @@ func ensure_children():
 func _editor_process():
 	ensure_children()
 
-	
 	var base: RobotCylinder = $Base
-	RobotUtil.reset_translation(base)
+	base.translation = Vector3(0, Math.in2m(length_inches/2), 0)
 	RobotUtil.reset_rotation(base)
 	RobotUtil.reset_scale(base)
 	base.radius_inches = radius_inches
 	base.length_inches = length_inches
 	
 	var rod: RobotCylinder = $Rod
-	rod.translation = Vector3(0, Math.in2m(1), 0)
+	rod.translation = Vector3(0, Math.in2m(length_inches/2 + 1), 0)
 	RobotUtil.reset_rotation(rod)
 	RobotUtil.reset_scale(rod)
 	rod.radius_inches = radius_inches * 0.5
