@@ -4,17 +4,21 @@ extends Spatial
 class_name RobotPiston
 
 export(int) var id = 0
-export(float) var radius_inches = 1
+export(float) var bore_diameter_inches = 0.88
 export(float) var length_inches = 12
 
 onready var sim: Node = get_node("/root/Spatial")
 onready var _piston_base: RigidBody = $Base
 onready var _piston_rod: RigidBody = $Rod
 
-var psi = 3 # TODO: 60 plz
-var psi2newtonsPerSquareMeter = 6895
-var pressureAreaSquareMeters = PI*Math.in2m(radius_inches)*Math.in2m(radius_inches)
-var force = psi * psi2newtonsPerSquareMeter * pressureAreaSquareMeters
+var psi = 60
+var lbf2n = 4.448
+var efficiency = 0.85
+var retract_ratio = 0.89
+
+var pressure_area_square_inches = PI*(bore_diameter_inches/2)*(bore_diameter_inches/2)
+var force_lbf = psi * pressure_area_square_inches
+var force_n = force_lbf * lbf2n * efficiency
 
 func ensure_children():
 	var base = get_node_or_null(@"Base")
@@ -45,15 +49,17 @@ func _editor_process():
 	base.translation = Vector3(0, Math.in2m(length_inches/2), 0)
 	RobotUtil.reset_rotation(base)
 	RobotUtil.reset_scale(base)
-	base.radius_inches = radius_inches
+	base.radius_inches = (bore_diameter_inches/2) + 0.5
 	base.length_inches = length_inches
+	base.solid = false
 	
 	var rod: RobotCylinder = $Rod
 	rod.translation = Vector3(0, Math.in2m(length_inches/2 + 1), 0)
 	RobotUtil.reset_rotation(rod)
 	RobotUtil.reset_scale(rod)
-	rod.radius_inches = radius_inches * 0.5
+	rod.radius_inches = base.radius_inches * 0.5
 	rod.length_inches = length_inches + 1
+	rod.solid = true
 	
 	var slider: SliderJoint = $Base/SliderJoint
 	slider.translation = Vector3(0, Math.in2m(1), 0)
@@ -77,6 +83,9 @@ func _physics_process(_delta):
 
 	var on = sim.get_data("PCM", str(0), "<solenoid_output_" + str(id), false)
 	var sgn = 1 if on else -1
+	var retract_reduction = 1 if on else retract_ratio
+	
+	var force = force_n * retract_reduction
 	
 	_piston_base.add_central_force(-sgn * _piston_base.global_transform.basis.y * force)
 	_piston_rod.add_central_force(sgn * _piston_base.global_transform.basis.y * force)

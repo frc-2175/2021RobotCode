@@ -72,7 +72,7 @@ enabled=PoolStringArray( "SIsilicon.3d.text" )
 
 [physics]
 
-common/physics_fps=90
+common/physics_fps=120
 
 [rendering]
 
