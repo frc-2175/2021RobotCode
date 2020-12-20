@@ -47,6 +47,9 @@ func get_mass_kg() -> float:
 	
 	return volume_m3 * density_kgpm3
 
+func _ready():
+	apply_center_of_mass_to_body()
+
 func _editor_process():
 	ensure_children()
 	
@@ -75,28 +78,56 @@ func _process(_delta):
 # gonna do this every time, but it doesn't really matter.
 func apply_mass_to_body():
 	# Find containing RigidBody
-	var bodyNode: Node = get_parent()
-	while bodyNode:
-		if bodyNode is RigidBody:
-			break
-		else:
-			bodyNode = bodyNode.get_parent()
-	
+	var bodyNode: RigidBody = get_parent()
 	if not bodyNode:
-		printerr("Node ", self.name, " needs to be inside a RigidBody.")
+		printerr("Node ", self.name, " needs to be a child of a RigidBody.")
 		return
 	
 	# Set stuff
 	var body: RigidBody = bodyNode
-	body.mass = get_masses(body)
+	body.mass = get_mass(body)
 	body.can_sleep = false
+
+func apply_center_of_mass_to_body():
+	# Find containing RigidBody
+	var bodyNode: RigidBody = get_parent()
+	if not bodyNode:
+		printerr("Node ", self.name, " needs to be a child of a RigidBody.")
+		return
 	
-# Recursively walk through a node and its children, adding up the masses
-func get_masses(node: Node) -> float:
+	var center_of_mass = get_center_of_mass(bodyNode)
+	var body_translate = center_of_mass - bodyNode.global_transform.origin
+
+	bodyNode.global_translate(body_translate)
+	for child in bodyNode.get_children():
+		if child is Spatial:
+			child.global_translate(-body_translate)
+
+# Walk through a node's children, adding up the masses
+func get_mass(node: RigidBody) -> float:
 	var sum: float = 0	
-	if node.has_method("get_mass_kg"):
-		sum += node.get_mass_kg()
 	for child in node.get_children():
-		sum += get_masses(child)
-	
+		if child.has_method("get_mass_kg"):
+			sum += child.get_mass_kg()
 	return sum
+
+# Gets a node's center of mass in world coordinates.
+func get_center_of_mass(node: RigidBody) -> Vector3:
+	var didInitialize: bool = false
+	var center: Vector3 = Vector3(0, 0, 0)
+	var total_mass: float = 0.0
+	
+	for child in node.get_children():
+		if child.has_method("get_mass_kg"):
+			child = child as Spatial
+			if not didInitialize:
+				# initialize!
+				center = child.global_transform.origin
+				total_mass = child.get_mass_kg()
+				didInitialize = true
+			else:
+				var new_total_mass = total_mass + child.get_mass_kg()
+				center = lerp(center, child.global_transform.origin, 1 - (total_mass / new_total_mass))
+				total_mass = new_total_mass
+	
+	return center

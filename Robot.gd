@@ -9,7 +9,6 @@ var atmospheric_pressure_Npcm2 = 10.13
 
 func _ready():
 	system_air_volume_cm3 = get_system_air_volume_cm3()
-	print("System air volume: ", system_air_volume_cm3)
 
 func get_volume_scale():
 	if system_air_volume_cm3 == 0:
