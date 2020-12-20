@@ -41,6 +41,15 @@ static func kg2lb(kg):
 static func lb2kg(lb):
 	return lb * 0.4536
 
+static func cfm2cm3ps(cfm):
+	return cfm * 471.9
+
+static func Npcm22psi(Npcm2):
+	return Npcm2 * 1.45
+
+static func psi2Npcm2(psi):
+	return psi * 0.6895
+
 static func length2m(length: float, unit) -> float:
 	match unit:
 		LengthUnit.Inches:

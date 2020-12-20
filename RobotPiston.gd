@@ -7,18 +7,18 @@ export(int) var id = 0
 export(float) var bore_diameter_inches = 0.88
 export(float) var length_inches = 12
 
-onready var sim: Node = get_node("/root/Spatial")
+onready var robot: Robot = RobotUtil.find_parent_by_script(self, Robot) as Robot
+onready var sim: Node = RobotUtil.find_parent_by_script(self, RobotSim)
 onready var _piston_base: RigidBody = $Base
 onready var _piston_rod: RigidBody = $Rod
 
-var psi = 60
 var lbf2n = 4.448
 var efficiency = 0.85
 var retract_ratio = 0.89
 
-var pressure_area_square_inches = PI*(bore_diameter_inches/2)*(bore_diameter_inches/2)
-var force_lbf = psi * pressure_area_square_inches
-var force_n = force_lbf * lbf2n * efficiency
+func get_air_volume_cm3():
+	var bore_area_cm2 = PI * Math.in2cm(bore_diameter_inches/2) * Math.in2cm(bore_diameter_inches/2)
+	return bore_area_cm2 * Math.in2cm(length_inches - 1 ) # Sub 1 for plunger. Not really accurate but whatever?
 
 func ensure_children():
 	var base = get_node_or_null(@"Base")
@@ -77,6 +77,8 @@ func _process(_delta):
 	if Engine.editor_hint:
 		return _editor_process()
 
+var last_on: bool = false
+
 func _physics_process(_delta):
 	if Engine.editor_hint:
 		return
@@ -85,7 +87,16 @@ func _physics_process(_delta):
 	var sgn = 1 if on else -1
 	var retract_reduction = 1 if on else retract_ratio
 	
+	if on != last_on:
+		robot.vent_working_air_cm3(get_air_volume_cm3())
+	
+	var psi = Math.Npcm22psi(robot.get_working_pressure_Npcm2() - robot.atmospheric_pressure_Npcm2)
+	var pressure_area_square_inches = PI*(bore_diameter_inches/2)*(bore_diameter_inches/2)
+	var force_lbf = psi * pressure_area_square_inches
+	var force_n = force_lbf * lbf2n * efficiency
 	var force = force_n * retract_reduction
 	
 	_piston_base.add_central_force(-sgn * _piston_base.global_transform.basis.y * force)
 	_piston_rod.add_central_force(sgn * _piston_base.global_transform.basis.y * force)
+	
+	last_on = on

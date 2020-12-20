@@ -37,3 +37,10 @@ static func reset_children(node: Node):
 		node.remove_child(child)
 		node.get_parent().add_child(child)
 		child.owner = node.get_tree().get_edited_scene_root()
+
+static func find_parent_by_script(node: Node, script: Script):
+	if not node:
+		return null
+	if node.get_script() == script:
+		return node
+	return find_parent_by_script(node.get_parent(), script)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=2]
+[gd_scene load_steps=33 format=2]
 
 [ext_resource path="res://RobotCylinder.gd" type="Script" id=1]
 [ext_resource path="res://RobotBoxPositionHelper.gd" type="Script" id=2]
@@ -8,6 +8,9 @@
 [ext_resource path="res://Wheel.tscn" type="PackedScene" id=6]
 [ext_resource path="res://RobotBox.gd" type="Script" id=7]
 [ext_resource path="res://RobotPiston.gd" type="Script" id=8]
+[ext_resource path="res://Robot.gd" type="Script" id=9]
+[ext_resource path="res://AirTank.tscn" type="PackedScene" id=10]
+[ext_resource path="res://PressureReadout.tscn" type="PackedScene" id=11]
 
 [sub_resource type="CubeMesh" id=1]
 
@@ -46,6 +49,11 @@ extents = Vector3( 0.0127, 0.0254, 0.17145 )
 extents = Vector3( 0.0127, 0.0381, 0.0254 )
 
 [sub_resource type="CubeMesh" id=15]
+
+[sub_resource type="BoxShape" id=20]
+extents = Vector3( 0.0254, 0.0254, 0.1524 )
+
+[sub_resource type="CubeMesh" id=21]
 
 [sub_resource type="CylinderMesh" id=16]
 
@@ -108,6 +116,7 @@ transform = Transform( 1, 0, 0, 0, 0.860458, 0.509522, 0, -0.509522, 0.860458, 0
 
 [node name="Robot" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+script = ExtResource( 9 )
 
 [node name="Chassis" type="RigidBody" parent="Robot"]
 mass = 7.82227
@@ -250,6 +259,18 @@ transform = Transform( 0.0254, 0, 0, 0, 0.0254, 0, 0, 0, 0.0127, 0, 0, 0 )
 mesh = SubResource( 11 )
 material/0 = null
 
+[node name="PressureReadout" parent="Robot/Chassis" instance=ExtResource( 11 )]
+transform = Transform( 0.592199, 0, 0, 0, 0.592199, 0, 0, 0, 0.592199, -0.034426, 0.103289, -0.185102 )
+
+[node name="AirTank" parent="Robot/Chassis" instance=ExtResource( 10 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.135533, 0.0166078, -0.205051 )
+
+[node name="AirTank2" parent="Robot/Chassis" instance=ExtResource( 10 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0470162, 0.0166078, -0.205051 )
+
+[node name="AirTank3" parent="Robot/Chassis" instance=ExtResource( 10 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0501893, 0.0166078, -0.205051 )
+
 [node name="Wheels" type="Spatial" parent="Robot"]
 
 [node name="Left" type="Spatial" parent="Robot/Wheels"]
@@ -333,8 +354,12 @@ transform = Transform( 1, 0, 0, 0, 0.26074, 0.965409, 0, -0.965409, 0.26074, 0, 
 
 [node name="Arm" type="RigidBody" parent="Robot/Intake/BotFront/ArmPosition"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.146 )
-mass = 1.06188
+mass = 7.24361
 can_sleep = false
+
+[node name="MassReadout" parent="Robot/Intake/BotFront/ArmPosition/Arm" instance=ExtResource( 5 )]
+transform = Transform( 0.654624, 0, 0, 0, 0.654624, 5.96046e-08, 0, -5.96046e-08, 0.654624, 0.377033, -2.98023e-08, -0.146861 )
+root = NodePath("../..")
 
 [node name="Left" type="CollisionShape" parent="Robot/Intake/BotFront/ArmPosition/Arm"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.241, 0, 0 )
@@ -388,6 +413,19 @@ transform = Transform( 0.0127, 0, 0, 0, 0.0381, 0, 0, 0, 0.0254, 0, 0, 0 )
 mesh = SubResource( 15 )
 material/0 = null
 
+[node name="RobotBox" type="CollisionShape" parent="Robot/Intake/BotFront/ArmPosition/Arm"]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 7.58592e-09, 0, 0.173545 )
+shape = SubResource( 20 )
+script = ExtResource( 7 )
+material = "Steel"
+height = 2.0
+solid = true
+
+[node name="Mesh" type="MeshInstance" parent="Robot/Intake/BotFront/ArmPosition/Arm/RobotBox"]
+transform = Transform( 0.0254, 0, 0, 0, 0.0254, 0, 0, 0, 0.1524, 0, 0, 0 )
+mesh = SubResource( 21 )
+material/0 = null
+
 [node name="Arm2Chassis" type="HingeJoint" parent="Robot/Intake/BotFront/ArmPosition"]
 transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0 )
 nodes/node_a = NodePath("../Arm")
@@ -404,12 +442,11 @@ length_inches = 6.0
 
 [node name="Base" type="RigidBody" parent="Robot/Intake/BotFront/Pistons/Left"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0762, 0 )
-mass = 0.736922
+mass = 0.339855
 can_sleep = false
 script = ExtResource( 1 )
 radius_inches = 0.94
 length_inches = 6.0
-solid = true
 
 [node name="SliderJoint" type="SliderJoint" parent="Robot/Intake/BotFront/Pistons/Left/Base"]
 transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0.0254, 0 )
@@ -469,12 +506,11 @@ length_inches = 6.0
 
 [node name="Base" type="RigidBody" parent="Robot/Intake/BotFront/Pistons/Right"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0762, 0 )
-mass = 0.736922
+mass = 0.339855
 can_sleep = false
 script = ExtResource( 1 )
 radius_inches = 0.94
 length_inches = 6.0
-solid = true
 
 [node name="SliderJoint" type="SliderJoint" parent="Robot/Intake/BotFront/Pistons/Right/Base"]
 transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0.0254, 0 )

@@ -1,5 +1,7 @@
 extends Node
 
+class_name RobotSim
+
 var devices = {}
 
 export var websocket_url = "ws://127.0.0.1:8080/wpilibws"
