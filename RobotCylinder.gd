@@ -1,5 +1,5 @@
 tool
-extends RigidBody
+extends CollisionShape
 
 class_name RobotCylinder
 
@@ -29,14 +29,6 @@ func ensure_children():
 		mesh.name = "Mesh"
 		self.add_child(mesh)
 		mesh.owner = get_tree().get_edited_scene_root()
-		
-	var collider = get_node_or_null(@"Collider")
-	if not collider:
-		collider = CollisionShape.new()
-		collider.shape = CylinderShape.new()
-		collider.name = "Collider"
-		self.add_child(collider)
-		collider.owner = get_tree().get_edited_scene_root()
 	
 	var start = get_node_or_null(@"Start")
 	if not start:
@@ -52,30 +44,30 @@ func ensure_children():
 		self.add_child(end)
 		end.owner = get_tree().get_edited_scene_root()
 
+func _ready():
+	var body: RigidBody = get_parent()
+	if body:
+		RobotUtil.apply_center_of_mass_to_body(body)
+	else:
+		printerr("Node ", self.name, " needs to be a child of a RigidBody.")
+
 func _editor_process():
 	ensure_children()
-	
-	self.can_sleep = false
 	
 	var r = Math.in2m(radius_inches)
 	var h = Math.in2m(length_inches)
 	
-	var collider = $Collider as CollisionShape
-	var shape = collider.shape as CylinderShape
-	RobotUtil.reset_translation(collider)
-	RobotUtil.reset_rotation(collider)
-	RobotUtil.reset_scale(collider)
-	RobotUtil.reset_children(collider)
-	shape.height = h
-	shape.radius = r
+	if not self.shape:
+		self.shape = CylinderShape.new()
+	RobotUtil.reset_scale(self)
+	self.shape.height = h
+	self.shape.radius = r
 	
 	var mesh = $Mesh as MeshInstance
 	RobotUtil.reset_translation(mesh)
 	RobotUtil.reset_rotation(mesh)
 	RobotUtil.reset_children(mesh)
 	mesh.scale = Vector3(r, h/2, r)
-	
-	self.mass = get_mass_kg()
 	
 	var start = $Start as Spatial
 	start.translation = Vector3(0, -h/2, 0)
@@ -86,6 +78,12 @@ func _editor_process():
 	end.translation = Vector3(0, h/2, 0)
 	RobotUtil.reset_rotation(end)
 	RobotUtil.reset_scale(end)
+	
+	var body: RigidBody = get_parent()
+	if body:
+		RobotUtil.apply_mass_to_body(body)
+	else:
+		printerr("Node ", self.name, " needs to be a child of a RigidBody.")
 
 func _process(_delta):
 	if Engine.editor_hint:

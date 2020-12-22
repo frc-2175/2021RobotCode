@@ -34,7 +34,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://RobotBoxPositionHelper.gd"
 }, {
-"base": "RigidBody",
+"base": "CollisionShape",
 "class": "RobotCylinder",
 "language": "GDScript",
 "path": "res://RobotCylinder.gd"

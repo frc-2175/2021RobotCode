@@ -44,3 +44,45 @@ static func find_parent_by_script(node: Node, script: Script):
 	if node.get_script() == script:
 		return node
 	return find_parent_by_script(node.get_parent(), script)
+
+# Walk through a node's children, adding up the masses.
+static func get_mass(node: RigidBody) -> float:
+	var sum: float = 0	
+	for child in node.get_children():
+		if child.has_method("get_mass_kg"):
+			sum += child.get_mass_kg()
+	return sum
+
+# Gets a node's center of mass in world coordinates.
+static func get_center_of_mass(node: RigidBody) -> Vector3:
+	var didInitialize: bool = false
+	var center: Vector3 = Vector3(0, 0, 0)
+	var total_mass: float = 0.0
+	
+	for child in node.get_children():
+		if child.has_method("get_mass_kg"):
+			child = child as Spatial
+			if not didInitialize:
+				# initialize!
+				center = child.global_transform.origin
+				total_mass = child.get_mass_kg()
+				didInitialize = true
+			else:
+				var new_total_mass = total_mass + child.get_mass_kg()
+				center = lerp(center, child.global_transform.origin, 1 - (total_mass / new_total_mass))
+				total_mass = new_total_mass
+	
+	return center
+
+static func apply_mass_to_body(body: RigidBody):
+	body.mass = get_mass(body)
+	body.can_sleep = false
+
+static func apply_center_of_mass_to_body(body: RigidBody):
+	var center_of_mass = get_center_of_mass(body)
+	var body_translate = center_of_mass - body.global_transform.origin
+
+	body.global_translate(body_translate)
+	for child in body.get_children():
+		if child is Spatial:
+			child.global_translate(-body_translate)
