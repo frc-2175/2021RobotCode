@@ -18,7 +18,7 @@ export(int) var motor_id = 1
 #var maxTorque = 0.4519 # Newton-meters, from 64 oz-in of torque under normal load
 var maxTorque = 1.5 # nah screw math
 
-onready var sim: Node = get_node("/root/Spatial")
+onready var sim: Node = RobotUtil.find_parent_by_script(self, RobotSim)
 
 func calculateConstants():
 	wheelRadiusM = wheelDiameterIn * in2cm / 100 / 2
