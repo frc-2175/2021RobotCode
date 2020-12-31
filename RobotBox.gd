@@ -75,6 +75,7 @@ func _editor_process():
 	var body: RigidBody = get_parent()
 	if body:
 		RobotUtil.apply_mass_to_body(body)
+		RobotUtil.set_collision_data(body)
 	else:
 		printerr("Node ", self.name, " needs to be a child of a RigidBody.")
 

@@ -11,6 +11,8 @@ export(float, 1, 60) var length_inches = 12
 export(float, 0.03125, 0.25) var thickness_inches = 0.125
 export(bool) var solid = false
 
+export(bool) var is_intake_wheel = false
+
 func get_mass_kg():
 	var r = Math.in2m(radius_inches)
 	var volume_m3 = PI*r*r * Math.in2m(length_inches)
@@ -82,6 +84,7 @@ func _editor_process():
 	var body: RigidBody = get_parent()
 	if body:
 		RobotUtil.apply_mass_to_body(body)
+		RobotUtil.set_collision_data(body)
 	else:
 		printerr("Node ", self.name, " needs to be a child of a RigidBody.")
 

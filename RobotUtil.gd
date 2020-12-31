@@ -86,3 +86,16 @@ static func apply_center_of_mass_to_body(body: RigidBody):
 	for child in body.get_children():
 		if child is Spatial:
 			child.global_translate(-body_translate)
+
+static func set_collision_data(body: RigidBody):
+	body.collision_layer = (1 << 2)
+	body.collision_mask = (1 << 0) | (1 << 2)
+		
+	var has_intake_wheels = false
+	for child in body.get_children():
+		child = child as Node
+		if child.get("is_intake_wheel"):
+			has_intake_wheels = true
+
+	body.set_collision_layer_bit(3, not has_intake_wheels)
+	body.set_collision_layer_bit(4, has_intake_wheels)

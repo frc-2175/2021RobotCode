@@ -102,8 +102,11 @@ enabled=PoolStringArray( "SIsilicon.3d.text" )
 
 [layer_names]
 
-3d_physics/layer_1="physics objects"
+3d_physics/layer_1="normal physics objects"
 3d_physics/layer_2="game pieces"
+3d_physics/layer_3="robot components"
+3d_physics/layer_4="static robot components"
+3d_physics/layer_5="intake wheels"
 
 [physics]
 

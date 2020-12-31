@@ -15,10 +15,15 @@ onready var directly_apply: bool = get_parent() as RigidBody != null
 
 func _physics_process(_delta):
 	if directly_apply:
-		var speed = sim.get_data(device_type(controller_type), device_id(controller_type, motor_id), speed_prop(controller_type), 0)
-		var torque = speed * max_torque * global_transform.basis.x
 		var body = get_parent() as RigidBody
-		body.add_torque(torque)
+		var speed = sim.get_data(device_type(controller_type), device_id(controller_type, motor_id), speed_prop(controller_type), 0)
+		if abs(speed) > 0.05:
+			var torque = speed * max_torque * global_transform.basis.x
+			body.add_torque(torque)
+		else:
+			# Counter-torque to stop rotation
+			var torque = -body.angular_velocity * 0.1
+			body.add_torque(torque)
 
 func device_type(t):
 	match t:

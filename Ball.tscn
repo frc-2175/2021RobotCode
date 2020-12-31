@@ -15,13 +15,21 @@ radius = 0.09
 albedo_color = Color( 1, 0.890196, 0, 1 )
 
 [node name="Ball" type="RigidBody"]
-collision_layer = 3
+collision_layer = 2
+collision_mask = 11
 mass = 0.14
 physics_material_override = SubResource( 1 )
 can_sleep = false
 script = ExtResource( 1 )
 
-[node name="CollisionShape" type="CollisionShape" parent="."]
+[node name="RigidCollision" type="CollisionShape" parent="."]
+shape = SubResource( 2 )
+
+[node name="Area" type="Area" parent="."]
+collision_layer = 0
+collision_mask = 16
+
+[node name="AreaCollision" type="CollisionShape" parent="Area"]
 shape = SubResource( 2 )
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
