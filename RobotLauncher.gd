@@ -6,6 +6,8 @@ enum MechanismType { Solenoid, TalonFX, TalonSRX, VictorSPX, PWM_Motor }
 enum SolenoidShootMode { On, Off }
 enum MotorShootMode { GreaterThan, LessThan }
 
+export(int) var max_game_pieces = 5
+
 # Launch the projectile with this velocity.
 export(float) var velocity_meters_per_second = 6
 # The type of robot mechanism that activates a shot. For example, the solenoid
@@ -46,6 +48,9 @@ func _process(_delta):
 	launch_active = do_launch
 
 func store(body: RigidBody):
+	if len(stored) >= max_game_pieces:
+		return
+
 	stored.append(_new_stored_body(body))
 	body.visible = false
 	body.collision_layer = 0

@@ -192,10 +192,10 @@ mass = 14.7623
 can_sleep = false
 
 [node name="Battery" parent="Robot/Chassis" instance=ExtResource( 17 )]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -0.0553245, 0.00752103, 0.0408209 )
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -0.0553246, 0.00752103, 0.0408209 )
 
 [node name="Compressor" parent="Robot/Chassis" instance=ExtResource( 17 )]
-transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0.0818915, 0.0241913, 0.0495708 )
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0.0818914, 0.0241913, 0.0495708 )
 thing = 1
 
 [node name="MassReadout" parent="Robot/Chassis" instance=ExtResource( 5 )]
@@ -337,7 +337,7 @@ mesh = SubResource( 12 )
 material/0 = null
 
 [node name="PressureReadout" parent="Robot/Chassis" instance=ExtResource( 11 )]
-transform = Transform( 0.592199, 0, 0, 0, 0.592199, 0, 0, 0, 0.592199, -0.00761727, 0.100071, -0.233095 )
+transform = Transform( 0.592199, 0, 0, 0, 0.592199, 0, 0, 0, 0.592199, -0.00761733, 0.100071, -0.233095 )
 
 [node name="AirTank" parent="Robot/Chassis" instance=ExtResource( 10 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.108724, 0.013389, -0.253044 )
@@ -350,10 +350,6 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.076998, 0.013389, -0.253044 
 
 [node name="LookTarget" type="Spatial" parent="Robot/Chassis"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0268047, 0.362748, -0.0376375 )
-
-[node name="Launcher" type="Spatial" parent="Robot/Chassis"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0268047, -0.00982124, -0.0376375 )
-script = ExtResource( 15 )
 
 [node name="IntakeArea" type="Area" parent="Robot/Chassis"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0268047, 0.0952312, 0.263448 )
@@ -445,7 +441,7 @@ nodes/node_b = NodePath("../../../Chassis")
 [node name="Intake" type="Spatial" parent="Robot"]
 
 [node name="BotFront" type="Spatial" parent="Robot/Intake"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.19209e-07, 0.415699 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.19209e-07, 0.4157 )
 script = ExtResource( 2 )
 z_position = 2
 box = NodePath("../../Chassis/FrontDriveRail")
@@ -461,11 +457,11 @@ mass = 1.06188
 can_sleep = false
 
 [node name="MassReadout" parent="Robot/Intake/BotFront/ArmPosition/Arm" instance=ExtResource( 5 )]
-transform = Transform( 0.654624, 0, 0, 0, 0.654624, 7.45058e-08, 0, -7.45058e-08, 0.654624, 0.377033, -0.0119574, -0.117775 )
+transform = Transform( 0.654624, 0, 0, 0, 0.654624, 7.45058e-08, 0, -7.45058e-08, 0.654624, 0.377033, -0.0119573, -0.117775 )
 root = NodePath("../..")
 
 [node name="Left" type="CollisionShape" parent="Robot/Intake/BotFront/ArmPosition/Arm"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.241, -0.0119572, 0.0290838 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.241, -0.0119573, 0.029084 )
 shape = SubResource( 14 )
 script = ExtResource( 7 )
 width = 1.0
@@ -491,7 +487,7 @@ mesh = SubResource( 17 )
 material/0 = null
 
 [node name="Right" type="CollisionShape" parent="Robot/Intake/BotFront/ArmPosition/Arm"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.241, -0.0119572, 0.0290838 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.241, -0.0119573, 0.029084 )
 shape = SubResource( 14 )
 script = ExtResource( 7 )
 width = 1.0
@@ -517,7 +513,7 @@ mesh = SubResource( 17 )
 material/0 = null
 
 [node name="Arm2IntakeLeft" type="HingeJoint" parent="Robot/Intake/BotFront/ArmPosition/Arm"]
-transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.240639, -0.0119576, 0.175083 )
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.240639, -0.0119577, 0.175083 )
 nodes/node_a = NodePath("..")
 nodes/node_b = NodePath("../../Intake")
 
@@ -533,7 +529,7 @@ nodes/node_b = NodePath("../../../../Chassis")
 collision/exclude_nodes = false
 
 [node name="Intake" type="RigidBody" parent="Robot/Intake/BotFront/ArmPosition"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7051e-05, 4.47035e-08, 0.292001 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7051e-05, 0, 0.292001 )
 collision_layer = 20
 collision_mask = 5
 mass = 3.6913
@@ -856,4 +852,25 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.36908, 0.23178, -0.928386 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.52056, 0.23178, -0.317467 )
 
 [node name="Ball4" parent="." instance=ExtResource( 13 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.719082, 0.23178, 0.500006 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.37079, 0.23178, 1.02893 )
+
+[node name="Ball5" parent="." instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.301464, 0.23178, 0.792518 )
+
+[node name="Ball6" parent="." instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.860859, 0.226956, 1.13926 )
+
+[node name="Ball7" parent="." instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.464398, 0.23178, 1.50004 )
+
+[node name="Ball8" parent="." instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.09539, 0.23178, 0.327446 )
+
+[node name="Ball9" parent="." instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.22632, 0.23178, 0.305723 )
+
+[node name="Ball10" parent="." instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.601458, 0.23178, 0.495991 )
+
+[node name="Ball11" parent="." instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8684, 0.23178, 0.500006 )
