@@ -1,16 +1,18 @@
 tool
 extends CollisionShape
 
-enum Thing { Battery, Compressor }
+enum Thing { Battery, CIM_Motor, Compressor }
 export(Thing) var thing
 
 var dimensions_m = {
 	Thing.Battery: [0.1803, 0.1671, 0.0762],
-	Thing.Compressor: [0.1509, 0.1151, 0.0536]
+	Thing.CIM_Motor: [0.1096, 0.0644, 0.0644],
+	Thing.Compressor: [0.1509, 0.1151, 0.0536],
 }
 
 var masses_kg = {
 	Thing.Battery: 5.6699,
+	Thing.CIM_Motor: 1.2701,
 	Thing.Compressor: 1.0886,
 }
 

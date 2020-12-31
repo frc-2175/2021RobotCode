@@ -3,7 +3,7 @@
 [ext_resource path="res://HeavyThing.gd" type="Script" id=1]
 
 [sub_resource type="BoxShape" id=1]
-extents = Vector3( 0.07545, 0.05755, 0.0268 )
+extents = Vector3( 0.09015, 0.08355, 0.0381 )
 
 [sub_resource type="CubeMesh" id=2]
 
