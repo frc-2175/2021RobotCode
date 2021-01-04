@@ -30,7 +30,7 @@ func _close(was_clean = false):
 
 func _connected(proto = ""):
 	print("Connected with protocol: ", proto)
-	_client.get_peer(1).put_packet("Test packet".to_utf8())
+	_client.get_peer(1).set_write_mode(WebSocketPeer.WRITE_MODE_TEXT)
 
 func _on_data():
 	var json = _client.get_peer(1).get_packet().get_string_from_utf8()
@@ -52,7 +52,13 @@ func _on_data():
 	for key in data:
 		devices[type][id][key] = data[key]
 
-#	if type == "PCM":
+#	if "Talon" in id:
+#		print(json)
+#
+#	if "DI" in type:
+#		print(json)
+
+#	if type == "SimDevices":
 #		print(json)
 	
 #	match p.result["type"]:
@@ -71,6 +77,17 @@ func get_data(type, id, field, default):
 	if not field in devices[type][id]:
 		return default
 	return devices[type][id][field]
+
+func send_data(type, id, fields):
+	if not _client.get_peer(1).is_connected_to_host():
+		return
+
+	var msg = {
+		"type": type,
+		"device": id,
+		"data": fields,
+	}
+	_client.get_peer(1).put_packet(JSON.print(msg).to_utf8())
 
 func _process(_delta):
 	_client.poll()
