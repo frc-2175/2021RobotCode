@@ -5,35 +5,47 @@ class_name RobotSim
 var devices = {}
 
 export var websocket_url = "ws://127.0.0.1:8080/wpilibws"
-var _client = WebSocketClient.new()
+var client = WebSocketClient.new()
+var reconnect_timer = Timer.new()
 
 func _ready():
-	_client.connect("server_close_request", self, "_close_requested")
-	_client.connect("connection_closed", self, "_close")
-	_client.connect("connection_error", self, "_close")
-	_client.connect("connection_established", self, "_connected")
+	client.connect("server_close_request", self, "_close_requested")
+	client.connect("connection_closed", self, "_close")
+	client.connect("connection_error", self, "_close")
+	client.connect("connection_established", self, "_connected")
+	client.connect("data_received", self, "_on_data")
 	
-	_client.connect("data_received", self, "_on_data")
+	reconnect_timer.connect("timeout", self, "reconnect")
 
-	var err = _client.connect_to_url(websocket_url)
-	print(err)
+	reconnect()
+
+func connect_to_sim() -> bool:
+	var err = client.connect_to_url(websocket_url)
 	if err != OK:
-		print("Unable to connect")
-		set_process(false)
-	
+		print("Unable to connect: ", err)
+	return err == OK
+
+func reconnect():
+	var connected = connect_to_sim()
+	if !connected:
+		print("Retrying in 5s...")
+		reconnect_timer.start(5)
+
 func _close_requested(code, reason):
 	print("Server requested close: ", code, reason)
+	print("Reconnecting...")
+	reconnect()
 
 func _close(was_clean = false):
-	print("Closed, clean: ", was_clean)
-	set_process(false)
+	print("Connection closed. Reconnecting...")
+	reconnect()
 
 func _connected(proto = ""):
 	print("Connected with protocol: ", proto)
-	_client.get_peer(1).set_write_mode(WebSocketPeer.WRITE_MODE_TEXT)
+	client.get_peer(1).set_write_mode(WebSocketPeer.WRITE_MODE_TEXT)
 
 func _on_data():
-	var json = _client.get_peer(1).get_packet().get_string_from_utf8()
+	var json = client.get_peer(1).get_packet().get_string_from_utf8()
 	var p = JSON.parse(json)
 	if p.error != OK:
 		print("Malformed data: ", json)
@@ -52,23 +64,6 @@ func _on_data():
 	for key in data:
 		devices[type][id][key] = data[key]
 
-#	if "Talon" in id:
-#		print(json)
-#
-#	if "DI" in type:
-#		print(json)
-
-#	if type == "SimDevices":
-#		print(json)
-	
-#	match p.result["type"]:
-#		"Joystick", "DriverStation", "DIO", "PCM", "dPWM", "AI", "AO", "PWM", "Encoder", "RoboRIO":
-#			pass
-#		_:
-#			print(json)
-	
-#	print("Got data from server: ", )
-
 func get_data(type, id, field, default):
 	if not type in devices:
 		return default
@@ -79,7 +74,7 @@ func get_data(type, id, field, default):
 	return devices[type][id][field]
 
 func send_data(type, id, fields):
-	if not _client.get_peer(1).is_connected_to_host():
+	if not client.get_peer(1).is_connected_to_host():
 		return
 
 	var msg = {
@@ -87,7 +82,7 @@ func send_data(type, id, fields):
 		"device": id,
 		"data": fields,
 	}
-	_client.get_peer(1).put_packet(JSON.print(msg).to_utf8())
+	client.get_peer(1).put_packet(JSON.print(msg).to_utf8())
 
 func _process(_delta):
-	_client.poll()
+	client.poll()
