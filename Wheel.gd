@@ -10,7 +10,7 @@ var wheelWidthM: float
 
 var dragStrength = 30
 
-enum ControllerType {TalonFX, TalonSRX, VictorSPX, PWM}
+enum ControllerType {TalonSRX, VictorSPX}
 export(ControllerType) var controller_type
 export(int) var motor_id = 1
 
@@ -18,7 +18,7 @@ export(int) var motor_id = 1
 #var maxTorque = 0.4519 # Newton-meters, from 64 oz-in of torque under normal load
 var maxTorque = 1.5 # nah screw math
 
-onready var sim: Node = RobotUtil.find_parent_by_script(self, RobotSim)
+onready var sim: Node = RobotUtil.find_parent_by_script(self, RobotSimClient)
 
 func calculateConstants():
 	wheelRadiusM = wheelDiameterIn * in2cm / 100 / 2
@@ -43,7 +43,7 @@ func _physics_process(_delta):
 	
 	if "normal" in result:
 		# add drive force
-		var speed = sim.get_data(device_type(controller_type), device_id(controller_type, motor_id), speed_prop(controller_type), 0)
+		var speed = get_speed()
 		var torque = speed * maxTorque * transform.basis.x
 		var forceDirection = torque.cross(result.normal).normalized()
 		var forceMagnitude = torque.length() / wheelRadiusM
@@ -56,27 +56,12 @@ func _physics_process(_delta):
 		if abs(speed) < 0.05:
 			add_central_force(dragStrength * -linear_velocity.project(transform.basis.z))
 
-func device_type(t):
-	match t:
-		ControllerType.PWM:
-			return "PWM"
-		_:
-			return "SimDevices"
-
-func device_id(t, id: int):
-	match t:
-		ControllerType.TalonFX:
-			return "Talon FX[%d]" % id
+func get_speed() -> float:
+	match controller_type:
 		ControllerType.TalonSRX:
-			return "Talon SRX[%d]" % id
+			return SimTalonSRX.new(sim, motor_id).get_percent_output()
 		ControllerType.VictorSPX:
-			return "Victor SPX[%d]" % id
+			return SimVictorSPX.new(sim, motor_id).get_percent_output()
 		_:
-			return str(id)
-
-func speed_prop(t):
-	match t:
-		ControllerType.PWM:
-			return "<speed"
-		_:
-			return "<>Motor Output"
+			printerr("Unrecognized controller type in wheel: ", controller_type)
+			return 0.0

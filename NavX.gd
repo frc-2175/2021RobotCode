@@ -4,7 +4,7 @@ extends Spatial
 # the Y axis up. It doesn't align with the X, Y, and Z axes that are in the NavX
 # manual, but it avoids more Godot weirdness. Euler angles are very annoying.
 
-onready var sim = RobotUtil.find_parent_by_script(self, RobotSim) as RobotSim
+onready var sim = RobotUtil.find_parent_by_script(self, RobotSimClient) as RobotSimClient
 onready var initial_basis: Basis = self.global_transform.basis
 
 func _physics_process(delta):

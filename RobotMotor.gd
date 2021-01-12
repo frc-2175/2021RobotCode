@@ -10,7 +10,7 @@ export(int) var motor_id = 1
 var max_torque = 0.4519 # Newton-meters, from 64 oz-in of torque under normal load
 #var max_torque = 1.5 # nah screw math
 
-onready var sim: Node = RobotUtil.find_parent_by_script(self, RobotSim)
+onready var sim: Node = RobotUtil.find_parent_by_script(self, RobotSimClient)
 onready var directly_apply: bool = get_parent() as RigidBody != null
 
 func _physics_process(_delta):

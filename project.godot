@@ -65,14 +65,24 @@ _global_script_classes=[ {
 "path": "res://RobotRuler.gd"
 }, {
 "base": "Node",
-"class": "RobotSim",
+"class": "RobotSimClient",
 "language": "GDScript",
-"path": "res://SimulatorClient.gd"
+"path": "res://RobotSimClient.gd"
 }, {
 "base": "Node",
 "class": "RobotUtil",
 "language": "GDScript",
 "path": "res://RobotUtil.gd"
+}, {
+"base": "Node",
+"class": "SimTalonSRX",
+"language": "GDScript",
+"path": "res://sim_devices/SimTalonSRX.gd"
+}, {
+"base": "Node",
+"class": "SimVictorSPX",
+"language": "GDScript",
+"path": "res://sim_devices/SimVictorSPX.gd"
 } ]
 _global_script_class_icons={
 "ArrayUtils": "",
@@ -86,8 +96,10 @@ _global_script_class_icons={
 "RobotMotor": "",
 "RobotPiston": "",
 "RobotRuler": "",
-"RobotSim": "",
-"RobotUtil": ""
+"RobotSimClient": "",
+"RobotUtil": "",
+"SimTalonSRX": "",
+"SimVictorSPX": ""
 }
 
 [application]

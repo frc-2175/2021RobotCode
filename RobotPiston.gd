@@ -8,7 +8,7 @@ export(float) var bore_diameter_inches = 0.88
 export(float) var length_inches = 12
 
 onready var robot: Robot = RobotUtil.find_parent_by_script(self, Robot) as Robot
-onready var sim: Node = RobotUtil.find_parent_by_script(self, RobotSim)
+onready var sim: Node = RobotUtil.find_parent_by_script(self, RobotSimClient)
 onready var _piston_base: RigidBody = $Base
 onready var _piston_rod: RigidBody = $Rod
 

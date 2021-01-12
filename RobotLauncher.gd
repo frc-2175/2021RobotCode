@@ -27,7 +27,7 @@ export(float) var motor_shoot_speed_threshold = 0
 var stored = []
 var launch_active = false
 
-onready var sim: RobotSim = RobotUtil.find_parent_by_script(self, RobotSim) as RobotSim
+onready var sim: RobotSimClient = RobotUtil.find_parent_by_script(self, RobotSimClient) as RobotSimClient
 var velocity_haver: Node
 
 func _ready():

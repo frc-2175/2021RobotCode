@@ -1,12 +1,14 @@
 extends Node
 
-class_name RobotSim
+class_name RobotSimClient
 
 var devices = {}
 
-export var websocket_url = "ws://127.0.0.1:8080/wpilibws"
+export var websocket_url = "ws://127.0.0.1:3300/wpilibws"
 var client = WebSocketClient.new()
 var reconnect_timer = Timer.new()
+
+export(Array, String) var print_if_message_contains = []
 
 func _ready():
 	client.connect("server_close_request", self, "_close_requested")
@@ -50,6 +52,14 @@ func _on_data():
 	if p.error != OK:
 		print("Malformed data: ", json)
 		return
+	
+	var do_print = false
+	for substring in print_if_message_contains:
+		if substring in json:
+			do_print = true
+			break
+	if do_print:
+		print(json)
 	
 	var type = p.result["type"]
 	var id = p.result["device"]
