@@ -74,12 +74,22 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://RobotUtil.gd"
 }, {
-"base": "Node",
+"base": "Object",
+"class": "SimDoubleSolenoid",
+"language": "GDScript",
+"path": "res://sim_devices/SimDoubleSolenoid.gd"
+}, {
+"base": "Object",
+"class": "SimSolenoid",
+"language": "GDScript",
+"path": "res://sim_devices/SimSolenoid.gd"
+}, {
+"base": "Object",
 "class": "SimTalonSRX",
 "language": "GDScript",
 "path": "res://sim_devices/SimTalonSRX.gd"
 }, {
-"base": "Node",
+"base": "Object",
 "class": "SimVictorSPX",
 "language": "GDScript",
 "path": "res://sim_devices/SimVictorSPX.gd"
@@ -98,6 +108,8 @@ _global_script_class_icons={
 "RobotRuler": "",
 "RobotSimClient": "",
 "RobotUtil": "",
+"SimDoubleSolenoid": "",
+"SimSolenoid": "",
 "SimTalonSRX": "",
 "SimVictorSPX": ""
 }

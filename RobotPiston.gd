@@ -3,14 +3,21 @@ extends Spatial
 
 class_name RobotPiston
 
-export(int) var id = 0
 export(float) var bore_diameter_inches = 0.88
 export(float) var length_inches = 12
+
+enum SolenoidType { Solenoid, DoubleSolenoid }
+export(SolenoidType) var solenoid_type = SolenoidType.Solenoid
+export(int) var single_channel = 0 # use only with single solenoid
+export(int) var double_forward_channel = 0 # use only with double solenoid
+export(int) var double_reverse_channel = 0 # use only with double solenoid
 
 onready var robot: Robot = RobotUtil.find_parent_by_script(self, Robot) as Robot
 onready var sim: Node = RobotUtil.find_parent_by_script(self, RobotSimClient)
 onready var _piston_base: RigidBody = $Base
 onready var _piston_rod: RigidBody = $Rod
+
+var sim_solenoid
 
 var lbf2n = 4.448
 var efficiency = 0.85
@@ -97,30 +104,47 @@ func _editor_process():
 	slider._set_upper_limit_angular(180)
 	slider._set_lower_limit_angular(-180)
 
+func _ready():
+	if solenoid_type == SolenoidType.Solenoid:
+		sim_solenoid = SimSolenoid.new(sim, single_channel)
+	elif solenoid_type == SolenoidType.DoubleSolenoid:
+		sim_solenoid = SimDoubleSolenoid.new(sim, double_forward_channel, double_reverse_channel)
+	else:
+		printerr("Unrecognized solenoid type: ", solenoid_type)
+
 func _process(_delta):
 	if Engine.editor_hint:
 		return _editor_process()
 
-var last_on: bool = false
+var last_forward: bool = false
 
 func _physics_process(_delta):
 	if Engine.editor_hint:
 		return
 
-	var on = sim.get_data("PCM", str(0), "<solenoid_output_" + str(id), false)
-	var sgn = 1 if on else -1
-	var retract_reduction = 1 if on else retract_ratio
-	
-	if on != last_on:
-		robot.vent_working_air_cm3(get_air_volume_cm3())
-	
-	var psi = Math.Npcm22psi(robot.get_working_pressure_Npcm2() - robot.atmospheric_pressure_Npcm2)
-	var pressure_area_square_inches = PI*(bore_diameter_inches/2)*(bore_diameter_inches/2)
-	var force_lbf = psi * pressure_area_square_inches
-	var force_n = force_lbf * lbf2n * efficiency
-	var force = force_n * retract_reduction
-	
-	_piston_base.add_central_force(-sgn * _piston_base.global_transform.basis.y * force)
-	_piston_rod.add_central_force(sgn * _piston_base.global_transform.basis.y * force)
-	
-	last_on = on
+	if solenoid_type == SolenoidType.DoubleSolenoid and sim_solenoid.get_value() == SimDoubleSolenoid.Value.Off:
+		pass # do nothing, neither side is pressurized
+	else:
+		var forward = get_forward()
+		var sgn = 1 if forward else -1
+		var retract_reduction = 1 if forward else retract_ratio
+		
+		if forward != last_forward:
+			robot.vent_working_air_cm3(get_air_volume_cm3())
+		
+		var psi = Math.Npcm22psi(robot.get_working_pressure_Npcm2() - robot.atmospheric_pressure_Npcm2)
+		var pressure_area_square_inches = PI*(bore_diameter_inches/2)*(bore_diameter_inches/2)
+		var force_lbf = psi * pressure_area_square_inches
+		var force_n = force_lbf * lbf2n * efficiency
+		var force = force_n * retract_reduction
+		
+		_piston_base.add_central_force(-sgn * _piston_base.global_transform.basis.y * force)
+		_piston_rod.add_central_force(sgn * _piston_base.global_transform.basis.y * force)
+		
+		last_forward = forward
+
+func get_forward() -> bool:
+	if solenoid_type == SolenoidType.Solenoid:
+		return sim_solenoid.get_output()
+	else:
+		return sim_solenoid.get_value() == SimDoubleSolenoid.Value.Forward

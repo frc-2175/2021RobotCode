@@ -640,6 +640,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.066, -0.444 )
 transform = Transform( 1, 0, 0, 0, 0.329938, -0.944003, 0, 0.944003, 0.329938, 0.241, 0, 2.98023e-08 )
 script = ExtResource( 8 )
 length_inches = 6.0
+double_reverse_channel = 1
 
 [node name="Base" type="RigidBody" parent="Robot/Intake/BotFront/Pistons/Left"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0762, 0 )
