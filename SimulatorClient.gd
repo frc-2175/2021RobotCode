@@ -41,7 +41,7 @@ func _close(was_clean = false):
 	reconnect()
 
 func _connected(proto = ""):
-	print("Connected with protocol: ", proto)
+	print("Connected to simulator.")
 	client.get_peer(1).set_write_mode(WebSocketPeer.WRITE_MODE_TEXT)
 
 func _on_data():

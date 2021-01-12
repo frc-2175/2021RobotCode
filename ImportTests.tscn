@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=2]
+[gd_scene load_steps=44 format=2]
 
 [ext_resource path="res://RobotCylinder.gd" type="Script" id=1]
 [ext_resource path="res://RobotBoxPositionHelper.gd" type="Script" id=2]
@@ -18,17 +18,7 @@
 [ext_resource path="res://RobotIntakeArea.gd" type="Script" id=16]
 [ext_resource path="res://HeavyThing.tscn" type="PackedScene" id=17]
 [ext_resource path="res://NavX.gd" type="Script" id=18]
-
-[sub_resource type="CubeMesh" id=1]
-
-[sub_resource type="SpatialMaterial" id=2]
-albedo_color = Color( 0.25098, 0.25098, 0.25098, 1 )
-
-[sub_resource type="ConvexPolygonShape" id=3]
-points = PoolVector3Array( -1, 1, 1, 1, 1, -1, 1, 1, 1, -1, 1, -1, -1, -1, 1, 1, -1, -1, 1, -1, 1, -1, -1, -1, 1, 1, 1, -1, 1, -1, 1, 1, -1, -1, 1, 1, 1, -1, 1, -1, -1, -1, 1, -1, -1, -1, -1, 1, 1, 1, 1, -1, -1, 1, -1, 1, 1, 1, -1, 1, 1, 1, -1, -1, -1, -1, -1, 1, -1, 1, -1, -1 )
-
-[sub_resource type="SpatialMaterial" id=4]
-albedo_color = Color( 0.54902, 0.54902, 0.54902, 1 )
+[ext_resource path="res://Block.tscn" type="PackedScene" id=19]
 
 [sub_resource type="BoxShape" id=5]
 extents = Vector3( 0.0381, 0.0254, 0.390525 )
@@ -98,123 +88,35 @@ height = 0.1778
 [node name="Spatial" type="Spatial"]
 script = ExtResource( 3 )
 
-[node name="Scenery" type="Spatial" parent="."]
-
-[node name="Floor" type="StaticBody" parent="Scenery"]
-transform = Transform( 9.92921, 0, 0, 0, -4.37114e-08, 1, 0, -6.34889, -2.77519e-07, 0, -1.0009, 0 )
-
-[node name="MeshInstance" type="MeshInstance" parent="Scenery/Floor"]
-transform = Transform( 1, 0, 0, 0, 0.999999, -6.03961e-14, 0, 7.10543e-15, 1, 0, 0, 0 )
-mesh = SubResource( 1 )
-material/0 = SubResource( 2 )
-
-[node name="CollisionShape" type="CollisionShape" parent="Scenery/Floor"]
-shape = SubResource( 3 )
-
-[node name="Block" type="StaticBody" parent="Scenery"]
-transform = Transform( 1.32653, -0.211966, -1.49719e-09, 0, -1.5623e-07, 0.577548, -0.0788094, -3.56784, -2.5201e-08, -4.03458, 0.420038, -0.928374 )
-
-[node name="MeshInstance" type="MeshInstance" parent="Scenery/Block"]
-transform = Transform( 0.999999, -5.96046e-08, -6.3573e-08, 7.45058e-09, 1.06222, -5.24025e-14, 6.3573e-08, 5.68434e-14, 0.999999, 1.19209e-06, 0.0380638, 2.38419e-07 )
-mesh = SubResource( 1 )
-material/0 = SubResource( 4 )
-
-[node name="CollisionShape" type="CollisionShape" parent="Scenery/Block"]
-transform = Transform( -1, 9.95198e-22, 1.50996e-07, 4.60382e-21, 1, 2.38988e-14, -1.50996e-07, 2.38988e-14, -1, 0, -8.74634e-08, 0 )
-shape = SubResource( 3 )
-
-[node name="Block2" type="StaticBody" parent="Scenery"]
-transform = Transform( 0.0167074, 5.31884, 2.50473e-08, 0, -2.34333e-07, 0.577548, 0.13257, -0.670317, -3.15664e-09, 0.872078, -0.105934, -4.5082 )
-
-[node name="MeshInstance" type="MeshInstance" parent="Scenery/Block2"]
-transform = Transform( 1, 0, -6.3573e-08, 0, 1, -2.66454e-14, 6.3573e-08, 2.84217e-14, 1, 0, -5.96046e-08, 0 )
-mesh = SubResource( 1 )
-material/0 = SubResource( 4 )
-
-[node name="CollisionShape" type="CollisionShape" parent="Scenery/Block2"]
-transform = Transform( -1, 9.95198e-22, 1.50996e-07, 4.60382e-21, 1, 2.38988e-14, -1.50996e-07, 2.38988e-14, -1, 0, -8.74634e-08, 0 )
-shape = SubResource( 3 )
-
-[node name="Block3" type="StaticBody" parent="Scenery"]
-transform = Transform( -0.132504, 0.641748, 3.2541e-09, 0, -2.17626e-07, 0.577548, 0.0172232, 4.93718, 2.50348e-08, 6.70575, -0.105934, -0.159294 )
-
-[node name="MeshInstance" type="MeshInstance" parent="Scenery/Block3"]
-transform = Transform( 1, 0, -6.3573e-08, 0, 1, -2.66454e-14, 6.3573e-08, 2.84217e-14, 1, 0, -5.96046e-08, 0 )
-mesh = SubResource( 1 )
-material/0 = SubResource( 4 )
-
-[node name="CollisionShape" type="CollisionShape" parent="Scenery/Block3"]
-transform = Transform( -1, 9.95198e-22, 1.50996e-07, 4.60382e-21, 1, 2.38988e-14, -1.50996e-07, 2.38988e-14, -1, 0, -8.74634e-08, 0 )
-shape = SubResource( 3 )
-
-[node name="Block4" type="StaticBody" parent="Scenery"]
-transform = Transform( -0.00845732, -5.52904, -2.51948e-08, 0, -2.42168e-07, 0.577548, -0.13335, 0.350661, 1.5979e-09, 1.67251, -0.105934, 1.96146 )
-
-[node name="MeshInstance" type="MeshInstance" parent="Scenery/Block4"]
-transform = Transform( 1, 0, -6.3573e-08, 0, 1, -2.66454e-14, 6.3573e-08, 2.84217e-14, 1, 0, -5.96046e-08, 0 )
-mesh = SubResource( 1 )
-material/0 = SubResource( 4 )
-
-[node name="CollisionShape" type="CollisionShape" parent="Scenery/Block4"]
-transform = Transform( -1, 9.95198e-22, 1.50996e-07, 4.60382e-21, 1, 2.38988e-14, -1.50996e-07, 2.38988e-14, -1, 0, -8.74634e-08, 0 )
-shape = SubResource( 3 )
-
-[node name="Ramp" type="StaticBody" parent="Scenery"]
-transform = Transform( 0.249102, 1.65997, 0.065779, -0.00972223, -0.200156, 0.573662, 0.892998, -0.465227, -0.0121035, 2.97965, -0.471461, -0.729839 )
-
-[node name="MeshInstance" type="MeshInstance" parent="Scenery/Ramp"]
-transform = Transform( 1, 8.9407e-08, -6.14673e-08, 1.49012e-08, 1, 1.5134e-09, 5.96046e-08, -5.58794e-09, 1, 0, 0, 0 )
-mesh = SubResource( 1 )
-material/0 = SubResource( 4 )
-
-[node name="CollisionShape" type="CollisionShape" parent="Scenery/Ramp"]
-transform = Transform( -1, 9.95198e-22, 1.50996e-07, 4.60382e-21, 1, 2.38988e-14, -1.50996e-07, 2.38988e-14, -1, 0, -8.74634e-08, 0 )
-shape = SubResource( 3 )
-
-[node name="Ramp2" type="StaticBody" parent="Scenery"]
-transform = Transform( 0.249102, 1.39007, 0.309018, -0.00972218, -0.959759, 0.481159, 0.892998, -0.398209, -0.0809623, 2.69381, -0.599479, -0.651498 )
-
-[node name="MeshInstance" type="MeshInstance" parent="Scenery/Ramp2"]
-transform = Transform( 1, 8.9407e-08, -6.14673e-08, 1.49012e-08, 1, 1.5134e-09, 5.96046e-08, -5.58794e-09, 1, 0, 0, 0 )
-mesh = SubResource( 1 )
-material/0 = SubResource( 4 )
-
-[node name="CollisionShape" type="CollisionShape" parent="Scenery/Ramp2"]
-transform = Transform( -1, 9.95198e-22, 1.50996e-07, 4.60382e-21, 1, 2.38988e-14, -1.50996e-07, 2.38988e-14, -1, 0, -8.74634e-08, 0 )
-shape = SubResource( 3 )
-
-[node name="Ramp3" type="StaticBody" parent="Scenery"]
-transform = Transform( -0.899852, 0.394868, -0.0456064, -0.0995563, -0.200156, 0.570332, 0.199867, 1.6781, 0.0787582, 4.71144, -0.471461, -2.49939 )
-
-[node name="MeshInstance" type="MeshInstance" parent="Scenery/Ramp3"]
-transform = Transform( 1, 8.9407e-08, -6.14673e-08, 1.49012e-08, 1, 1.5134e-09, 5.96046e-08, -5.58794e-09, 1, 0, 0, 0 )
-mesh = SubResource( 1 )
-material/0 = SubResource( 4 )
-
-[node name="CollisionShape" type="CollisionShape" parent="Scenery/Ramp3"]
-transform = Transform( -1, 9.95198e-22, 1.50996e-07, 4.60382e-21, 1, 2.38988e-14, -1.50996e-07, 2.38988e-14, -1, 0, -8.74634e-08, 0 )
-shape = SubResource( 3 )
-
-[node name="Ramp4" type="StaticBody" parent="Scenery"]
-transform = Transform( -0.823954, 0.731025, -0.104573, -0.380032, -0.959759, 0.418936, 0.190441, 1.24758, 0.38356, 4.8524, -0.458744, -3.32052 )
-
-[node name="MeshInstance" type="MeshInstance" parent="Scenery/Ramp4"]
-transform = Transform( 1, 8.9407e-08, -6.14673e-08, 1.49012e-08, 1, 1.5134e-09, 5.96046e-08, -5.58794e-09, 1, 0, 0, 0 )
-mesh = SubResource( 1 )
-material/0 = SubResource( 4 )
-
-[node name="CollisionShape" type="CollisionShape" parent="Scenery/Ramp4"]
-transform = Transform( -1, 9.95198e-22, 1.50996e-07, 4.60382e-21, 1, 2.38988e-14, -1.50996e-07, 2.38988e-14, -1, 0, -8.74634e-08, 0 )
-shape = SubResource( 3 )
-
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
-transform = Transform( 0.253334, -0.857619, 0.447562, 0.344187, 0.512289, 0.786826, -0.904078, -0.0452852, 0.424961, 3.52523, 5.18887, 1.21273 )
+transform = Transform( 0.253334, -0.857619, 0.447562, 0.344187, 0.512289, 0.786826, -0.904078, -0.0452847, 0.424961, 3.52523, 5.18887, 1.21273 )
 shadow_enabled = true
 
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.831654, 0.555294, 0, -0.555294, 0.831654, 1.44437, 1.26452, 2.21366 )
 script = ExtResource( 14 )
 target = NodePath("../Robot/Chassis/LookTarget")
+
+[node name="Scenery" type="Spatial" parent="."]
+
+[node name="Floor" parent="Scenery" instance=ExtResource( 19 )]
+transform = Transform( 9.92921, 0, 0, 0, -2.77519e-07, 1, 0, -6.34889, -4.37114e-08, 0, -0.97996, 4.28354e-08 )
+color = Color( 0.215686, 0.215686, 0.215686, 1 )
+
+[node name="Block" parent="Scenery" instance=ExtResource( 19 )]
+transform = Transform( 1.32653, -0.211966, -1.49719e-09, 0, -1.5623e-07, 0.577548, -0.0788094, -3.56784, -2.5201e-08, -4.03458, 0.420038, -0.928374 )
+
+[node name="Block2" parent="Scenery" instance=ExtResource( 19 )]
+transform = Transform( 0.0167074, 5.31884, 2.50473e-08, -7.36815e-17, -2.34333e-07, 0.577548, 0.13257, -0.670317, -3.15664e-09, 0.872078, -0.105934, -4.5082 )
+
+[node name="Block3" parent="Scenery" instance=ExtResource( 19 )]
+transform = Transform( -0.132504, 0.641748, 3.2541e-09, 0, -2.17626e-07, 0.577548, 0.0172232, 4.93718, 2.50348e-08, 6.70575, -0.105934, -0.159294 )
+
+[node name="Block4" parent="Scenery" instance=ExtResource( 19 )]
+transform = Transform( -0.00845732, -5.52904, -2.51948e-08, 0, -2.42168e-07, 0.577548, -0.13335, 0.350661, 1.5979e-09, 1.67251, -0.105934, 1.96146 )
+
+[node name="Block5" parent="Scenery" instance=ExtResource( 19 )]
+transform = Transform( 0.249102, 1.65997, 0.065779, -0.00972223, -0.200156, 0.573662, 0.892998, -0.465227, -0.0121035, 2.97965, -0.471461, -0.729839 )
 
 [node name="Robot" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
@@ -498,11 +400,11 @@ mass = 1.06188
 can_sleep = false
 
 [node name="MassReadout" parent="Robot/Intake/BotFront/ArmPosition/Arm" instance=ExtResource( 5 )]
-transform = Transform( 0.654624, 0, 0, 0, 0.654624, 7.45058e-08, 0, -7.45058e-08, 0.654624, 0.377033, -0.0119573, -0.117775 )
+transform = Transform( 0.654624, 0, 0, 0, 0.654624, 7.45058e-08, 0, -7.45058e-08, 0.654624, 0.377033, -0.0119574, -0.117775 )
 root = NodePath("../..")
 
 [node name="Left" type="CollisionShape" parent="Robot/Intake/BotFront/ArmPosition/Arm"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.241, -0.0119573, 0.029084 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.241, -0.0119573, 0.0290838 )
 shape = SubResource( 14 )
 script = ExtResource( 7 )
 width = 1.0
@@ -528,7 +430,7 @@ mesh = SubResource( 17 )
 material/0 = null
 
 [node name="Right" type="CollisionShape" parent="Robot/Intake/BotFront/ArmPosition/Arm"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.241, -0.0119573, 0.029084 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.241, -0.0119573, 0.0290838 )
 shape = SubResource( 14 )
 script = ExtResource( 7 )
 width = 1.0
@@ -559,7 +461,7 @@ nodes/node_a = NodePath("..")
 nodes/node_b = NodePath("../../Intake")
 
 [node name="Arm2IntakeRight" type="HingeJoint" parent="Robot/Intake/BotFront/ArmPosition/Arm"]
-transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -0.241, -0.0117357, 0.175198 )
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -0.241, -0.0117358, 0.175198 )
 nodes/node_a = NodePath("..")
 nodes/node_b = NodePath("../../Intake")
 
@@ -570,7 +472,7 @@ nodes/node_b = NodePath("../../../../Chassis")
 collision/exclude_nodes = false
 
 [node name="Intake" type="RigidBody" parent="Robot/Intake/BotFront/ArmPosition"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7051e-05, 0, 0.292001 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7051e-05, -2.98023e-08, 0.292001 )
 collision_layer = 20
 collision_mask = 5
 mass = 3.6913
