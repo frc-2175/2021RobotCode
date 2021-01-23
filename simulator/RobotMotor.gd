@@ -16,7 +16,7 @@ onready var directly_apply: bool = get_parent() as RigidBody != null
 func _physics_process(_delta):
 	if directly_apply:
 		var body = get_parent() as RigidBody
-		var speed = sim.get_data(device_type(controller_type), device_id(controller_type, motor_id), speed_prop(controller_type), 0)
+		var speed = get_speed()
 		if abs(speed) > 0.05:
 			var torque = speed * max_torque * global_transform.basis.x
 			body.add_torque(torque)
@@ -25,27 +25,12 @@ func _physics_process(_delta):
 			var torque = -body.angular_velocity * 0.1
 			body.add_torque(torque)
 
-func device_type(t):
-	match t:
-		ControllerType.PWM:
-			return "PWM"
-		_:
-			return "SimDevices"
-
-func device_id(t, id: int):
-	match t:
-		ControllerType.TalonFX:
-			return "Talon FX[%d]" % id
+func get_speed() -> float:
+	match controller_type:
 		ControllerType.TalonSRX:
-			return "Talon SRX[%d]" % id
+			return SimTalonSRX.new(sim, motor_id).get_percent_output()
 		ControllerType.VictorSPX:
-			return "Victor SPX[%d]" % id
+			return SimVictorSPX.new(sim, motor_id).get_percent_output()
 		_:
-			return str(id)
-
-func speed_prop(t):
-	match t:
-		ControllerType.PWM:
-			return "<speed"
-		_:
-			return "<>Motor Output"
+			printerr("Unrecognized controller type in wheel: ", controller_type)
+			return 0.0
