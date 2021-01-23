@@ -75,21 +75,22 @@ func launch():
 func should_launch() -> bool:
 	match mechanism_type:
 		MechanismType.Solenoid:
-			var solenoid_on = sim.get_data("PCM", str(0), "<solenoid_output_" + str(device_id), false)
+			var solenoid = SimSolenoid.new(sim, device_id)
 			match solenoid_shoot_when:
 				SolenoidShootMode.On:
-					return solenoid_on
+					return solenoid.get_output()
 				SolenoidShootMode.Off:
-					return not solenoid_on
+					return not solenoid.get_output()
 		MechanismType.TalonFX, MechanismType.TalonSRX, MechanismType.VictorSPX, MechanismType.PWM_Motor:
 			var motor_value = 0
 			match mechanism_type:
 				MechanismType.TalonFX:
+#					motor_value = SimTalonFX.new(sim, device_id).get_percent_output()
 					motor_value = sim.get_data("SimDevices", "Talon FX[%d]" % device_id, "<>Motor Output", 0)
 				MechanismType.TalonSRX:
-					motor_value = sim.get_data("SimDevices", "Talon SRX[%d]" % device_id, "<>Motor Output", 0)
+					motor_value = SimTalonSRX.new(sim, device_id).get_percent_output()
 				MechanismType.VictorSPX:
-					motor_value = sim.get_data("SimDevices", "Victor SPX[%d]" % device_id, "<>Motor Output", 0)
+					motor_value = SimVictorSPX.new(sim, device_id).get_percent_output()
 				MechanismType.PWM_Motor:
 					motor_value = sim.get_data("PWM", str(device_id), "<speed", 0)
 			match motor_shoot_when:
