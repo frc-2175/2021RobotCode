@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://AirTank.gd" type="Script" id=1]
+
+[sub_resource type="CapsuleMesh" id=22]
+
+[node name="AirTank" type="Spatial"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.135533, 0.0166078, -0.205051 )
+script = ExtResource( 1 )
+
+[node name="Mesh" type="MeshInstance" parent="."]
+transform = Transform( 0.032, 0, 0, 0, 0.032, 0, 0, 0, 0.104, 0, 0, 0 )
+mesh = SubResource( 22 )
+material/0 = null
