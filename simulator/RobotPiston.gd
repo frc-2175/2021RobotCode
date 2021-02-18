@@ -13,9 +13,11 @@ export(int) var double_forward_channel = 0 # use only with double solenoid
 export(int) var double_reverse_channel = 0 # use only with double solenoid
 
 onready var robot: Robot = RobotUtil.find_parent_by_script(self, Robot) as Robot
-onready var sim: Node = RobotUtil.find_parent_by_script(self, RobotSimClient)
+onready var sim: RobotSimClient = RobotUtil.find_parent_by_script(self, RobotSimClient)
 onready var _piston_base: RigidBody = $Base
 onready var _piston_rod: RigidBody = $Rod
+
+export(bool) var is_intake = false
 
 var sim_solenoid
 
@@ -122,7 +124,7 @@ func _physics_process(_delta):
 	if Engine.editor_hint:
 		return
 
-	if solenoid_type == SolenoidType.DoubleSolenoid and sim_solenoid.get_value() == SimDoubleSolenoid.Value.Off:
+	if sim.connected and solenoid_type == SolenoidType.DoubleSolenoid and sim_solenoid.get_value() == SimDoubleSolenoid.Value.Off:
 		pass # do nothing, neither side is pressurized
 	else:
 		var forward = get_forward()
@@ -144,7 +146,10 @@ func _physics_process(_delta):
 		last_forward = forward
 
 func get_forward() -> bool:
-	if solenoid_type == SolenoidType.Solenoid:
-		return sim_solenoid.get_output()
+	if sim.connected:
+		if solenoid_type == SolenoidType.Solenoid:
+			return sim_solenoid.get_output()
+		else:
+			return sim_solenoid.get_value() == SimDoubleSolenoid.Value.Forward
 	else:
-		return sim_solenoid.get_value() == SimDoubleSolenoid.Value.Forward
+		return !robot.intake_in

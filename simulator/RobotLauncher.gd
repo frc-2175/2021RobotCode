@@ -28,6 +28,7 @@ var stored = []
 var launch_active = false
 
 onready var sim: RobotSimClient = RobotUtil.find_parent_by_script(self, RobotSimClient) as RobotSimClient
+onready var robot: Robot = RobotUtil.find_parent_by_script(self, Robot) as Robot
 var velocity_haver: Node
 
 func _ready():
@@ -73,31 +74,34 @@ func launch():
 	body.linear_velocity = self_velocity + launch_velocity
 
 func should_launch() -> bool:
-	match mechanism_type:
-		MechanismType.Solenoid:
-			var solenoid = SimSolenoid.new(sim, device_id)
-			match solenoid_shoot_when:
-				SolenoidShootMode.On:
-					return solenoid.get_output()
-				SolenoidShootMode.Off:
-					return not solenoid.get_output()
-		MechanismType.TalonFX, MechanismType.TalonSRX, MechanismType.VictorSPX, MechanismType.PWM_Motor:
-			var motor_value = 0
-			match mechanism_type:
-				MechanismType.TalonFX:
-#					motor_value = SimTalonFX.new(sim, device_id).get_percent_output()
-					motor_value = sim.get_data("SimDevices", "Talon FX[%d]" % device_id, "<>Motor Output", 0)
-				MechanismType.TalonSRX:
-					motor_value = SimTalonSRX.new(sim, device_id).get_percent_output()
-				MechanismType.VictorSPX:
-					motor_value = SimVictorSPX.new(sim, device_id).get_percent_output()
-				MechanismType.PWM_Motor:
-					motor_value = sim.get_data("PWM", str(device_id), "<speed", 0)
-			match motor_shoot_when:
-				MotorShootMode.GreaterThan:
-					return motor_value > motor_shoot_speed_threshold
-				MotorShootMode.LessThan:
-					return motor_value < motor_shoot_speed_threshold
+	if sim.connected:
+		match mechanism_type:
+			MechanismType.Solenoid:
+				var solenoid = SimSolenoid.new(sim, device_id)
+				match solenoid_shoot_when:
+					SolenoidShootMode.On:
+						return solenoid.get_output()
+					SolenoidShootMode.Off:
+						return not solenoid.get_output()
+			MechanismType.TalonFX, MechanismType.TalonSRX, MechanismType.VictorSPX, MechanismType.PWM_Motor:
+				var motor_value = 0
+				match mechanism_type:
+					MechanismType.TalonFX:
+	#					motor_value = SimTalonFX.new(sim, device_id).get_percent_output()
+						motor_value = sim.get_data("SimDevices", "Talon FX[%d]" % device_id, "<>Motor Output", 0)
+					MechanismType.TalonSRX:
+						motor_value = SimTalonSRX.new(sim, device_id).get_percent_output()
+					MechanismType.VictorSPX:
+						motor_value = SimVictorSPX.new(sim, device_id).get_percent_output()
+					MechanismType.PWM_Motor:
+						motor_value = sim.get_data("PWM", str(device_id), "<speed", 0)
+				match motor_shoot_when:
+					MotorShootMode.GreaterThan:
+						return motor_value > motor_shoot_speed_threshold
+					MotorShootMode.LessThan:
+						return motor_value < motor_shoot_speed_threshold
+	else:
+		return Input.get_action_strength("robot_shoot") > 0
 	
 	printerr("RobotLauncher '%s' has a bug! Could not decide whether or not to launch a game piece." % self.name)
 	return false

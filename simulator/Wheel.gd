@@ -18,7 +18,11 @@ export(int) var motor_id = 1
 #var maxTorque = 0.4519 # Newton-meters, from 64 oz-in of torque under normal load
 var maxTorque = 1.5 # nah screw math
 
-onready var sim: Node = RobotUtil.find_parent_by_script(self, RobotSimClient)
+enum OfflineDriveSide {Left, Right}
+export(OfflineDriveSide) var offline_drive_side
+
+onready var sim: RobotSimClient = RobotUtil.find_parent_by_script(self, RobotSimClient)
+onready var robot: Robot = RobotUtil.find_parent_by_script(self, Robot)
 
 func calculateConstants():
 	wheelRadiusM = wheelDiameterIn * in2cm / 100 / 2
@@ -57,11 +61,22 @@ func _physics_process(_delta):
 			add_central_force(dragStrength * -linear_velocity.project(transform.basis.z))
 
 func get_speed() -> float:
-	match controller_type:
-		ControllerType.TalonSRX:
-			return SimTalonSRX.new(sim, motor_id).get_percent_output()
-		ControllerType.VictorSPX:
-			return SimVictorSPX.new(sim, motor_id).get_percent_output()
-		_:
-			printerr("Unrecognized controller type in wheel: ", controller_type)
-			return 0.0
+	if sim.connected:
+		match controller_type:
+			ControllerType.TalonSRX:
+				return SimTalonSRX.new(sim, motor_id).get_percent_output()
+			ControllerType.VictorSPX:
+				return SimVictorSPX.new(sim, motor_id).get_percent_output()
+			_:
+				printerr("Unrecognized controller type in wheel: ", controller_type)
+				return 0.0
+	else:
+		var curvatureOutputs = robot.curvature_drive()
+		match offline_drive_side:
+			OfflineDriveSide.Left:
+				return curvatureOutputs[0]
+			OfflineDriveSide.Right:
+				return curvatureOutputs[1]
+			_:
+				printerr("Unrecognized offline drive side in wheel: ", offline_drive_side)
+				return 0.0

@@ -9,6 +9,8 @@ var extra_air_volume_cm3: float = 0.0
 
 var atmospheric_pressure_Npcm2 = 10.13
 
+var intake_in: bool = true
+
 func _ready():
 	system_air_volume_cm3 = get_system_air_volume_cm3()
 	if start_with_max_air:
@@ -56,6 +58,8 @@ func vent_working_air_cm3(volume_cm3):
 	var adjusted_volume = volume_cm3 / get_volume_scale()
 	extra_air_volume_cm3 = max(0, extra_air_volume_cm3 - adjusted_volume)
 
+var toggle_active: bool = false
+
 func _process(delta):
 	var current_pressure_psi = Math.Npcm22psi(get_air_pressure_Npcm2() - atmospheric_pressure_Npcm2)
 	if current_pressure_psi < 120:
@@ -63,3 +67,64 @@ func _process(delta):
 		var current_flow_rate_cm3ps = Math.cfm2cm3ps(current_flow_rate_cfm)
 		var new_air_cm3 = current_flow_rate_cm3ps * delta
 		extra_air_volume_cm3 += new_air_cm3
+	
+	if Input.get_action_strength("robot_intake_in") > 0:
+		intake_in = true
+	elif Input.get_action_strength("robot_intake_out") > 0:
+		intake_in = false
+	elif !toggle_active and Input.get_action_strength("robot_intake_toggle") > 0:
+		intake_in = !intake_in
+	
+	toggle_active = Input.get_action_strength("robot_intake_toggle") > 0
+
+func curvature_speed() -> float:
+	return Input.get_action_strength("robot_forward") - Input.get_action_strength("robot_backward")
+
+func curvature_turn() -> float:
+	return Input.get_action_strength("robot_right") - Input.get_action_strength("robot_left")
+
+# Direct port from the WPILib source
+func curvature_drive() -> Vector2:
+	var xSpeed: float = curvature_speed()
+	var zRotation: float = curvature_turn()
+
+	var angularPower: float
+	var overPower: bool
+
+	var isQuickTurn: bool = abs(xSpeed) < 0.1
+
+	if isQuickTurn:
+		overPower = true
+		angularPower = zRotation
+	else:
+		overPower = false
+		angularPower = abs(xSpeed) * zRotation
+
+	var leftMotorOutput: float = xSpeed + angularPower
+	var rightMotorOutput: float = xSpeed - angularPower
+
+	# If rotation is overpowered, reduce both outputs to within acceptable range
+	if overPower:
+		if leftMotorOutput > 1.0:
+			rightMotorOutput -= leftMotorOutput - 1.0
+			leftMotorOutput = 1.0
+		elif rightMotorOutput > 1.0:
+			leftMotorOutput -= rightMotorOutput - 1.0
+			rightMotorOutput = 1.0
+		elif leftMotorOutput < -1.0:
+			rightMotorOutput -= leftMotorOutput + 1.0
+			leftMotorOutput = -1.0
+		elif rightMotorOutput < -1.0:
+			leftMotorOutput -= rightMotorOutput + 1.0
+			rightMotorOutput = -1.0
+
+	# Normalize the wheel speeds
+	var maxMagnitude: float = max(abs(leftMotorOutput), abs(rightMotorOutput))
+	if maxMagnitude > 1.0:
+		leftMotorOutput /= maxMagnitude
+		rightMotorOutput /= maxMagnitude
+
+	return Vector2(leftMotorOutput, -rightMotorOutput)
+
+func intake_spin_speed():
+	return Input.get_action_strength("robot_intake_spin_in") - Input.get_action_strength("robot_intake_spin_out")

@@ -10,6 +10,8 @@ var reconnect_timer = Timer.new()
 
 export(Array, String) var print_if_message_contains = []
 
+var connected: bool = false
+
 func _ready():
 	client.connect("server_close_request", self, "_close_requested")
 	client.connect("connection_closed", self, "_close")
@@ -28,8 +30,9 @@ func connect_to_sim() -> bool:
 	return err == OK
 
 func reconnect():
-	var connected = connect_to_sim()
-	if !connected:
+	connected = false
+	var success = connect_to_sim()
+	if !success:
 		print("Retrying in 5s...")
 		reconnect_timer.start(5)
 
@@ -44,6 +47,7 @@ func _close(was_clean = false):
 
 func _connected(proto = ""):
 	print("Connected to simulator.")
+	connected = true
 	client.get_peer(1).set_write_mode(WebSocketPeer.WRITE_MODE_TEXT)
 
 func _on_data():
