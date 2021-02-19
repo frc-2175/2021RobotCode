@@ -1,7 +1,9 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://2020Robot.tscn" type="PackedScene" id=1]
+[ext_resource path="res://SizedBlock.tscn" type="PackedScene" id=2]
 [ext_resource path="res://RobotSimClient.gd" type="Script" id=3]
+[ext_resource path="res://SizedHexagon.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Ball.tscn" type="PackedScene" id=13]
 [ext_resource path="res://SimCamera.gd" type="Script" id=14]
 [ext_resource path="res://Block.tscn" type="PackedScene" id=19]
@@ -24,27 +26,44 @@ target = NodePath("../Robot/Chassis/LookTarget")
 transform = Transform( 9.92921, 0, 0, 0, -2.77519e-07, 1, 0, -6.34889, -4.37114e-08, 0, -0.97996, 4.28354e-08 )
 color = Color( 0.215686, 0.215686, 0.215686, 1 )
 
-[node name="Block" parent="Scenery" instance=ExtResource( 19 )]
-transform = Transform( 1.32653, -0.211966, -1.49719e-09, 0, -1.5623e-07, 0.577548, -0.0788094, -3.56784, -2.5201e-08, -4.03458, 0.420038, -0.928374 )
-color = Color( 0.6, 0.6, 0.6, 1 )
+[node name="SizedBlock2" parent="Scenery" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 9.58, -1, -0.1 )
+unit = 1
+width = 0.82021
+height = 16.4042
+depth = 27.0
 
-[node name="Block2" parent="Scenery" instance=ExtResource( 19 )]
-transform = Transform( 0.0167074, 5.31884, 2.50473e-08, -7.36815e-17, -2.34333e-07, 0.577548, 0.13257, -0.670317, -3.15664e-09, 0.872078, -0.105934, -4.5082 )
-color = Color( 0.6, 0.6, 0.6, 1 )
+[node name="SizedBlock3" parent="Scenery" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -6.63188, -1, -0.092003 )
+unit = 1
+width = 0.82021
+height = 16.4042
+depth = 27.0
 
-[node name="Block3" parent="Scenery" instance=ExtResource( 19 )]
-transform = Transform( -0.132504, 0.641748, 3.2541e-09, 0, -2.17626e-07, 0.577548, 0.0172232, 4.93718, 2.50348e-08, 6.70575, -0.105934, -0.159294 )
-color = Color( 0.6, 0.6, 0.6, 1 )
+[node name="SizedBlock4" parent="Scenery" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.475, -1, -4.324 )
+unit = 1
+width = 54.0
+height = 16.4042
+depth = 0.82021
 
-[node name="Block4" parent="Scenery" instance=ExtResource( 19 )]
-transform = Transform( -0.00845732, -5.52904, -2.51948e-08, 0, -2.42168e-07, 0.577548, -0.13335, 0.350661, 1.5979e-09, 1.67251, -0.105934, 1.96146 )
-color = Color( 0.6, 0.6, 0.6, 1 )
+[node name="SizedBlock5" parent="Scenery" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.475, -1, 4.14 )
+unit = 1
+width = 54.0
+height = 16.4042
+depth = 0.82021
 
-[node name="Block5" parent="Scenery" instance=ExtResource( 19 )]
-transform = Transform( 0.249102, 1.65997, 0.065779, -0.00972223, -0.200156, 0.573662, 0.892998, -0.465227, -0.0121035, 2.97965, -0.471461, -0.729839 )
-color = Color( 0.6, 0.6, 0.6, 1 )
+[node name="SizedHexagon" parent="Scenery" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.51448, 0.915833, -2.2411 )
+color = Color( 0.792157, 0.215686, 0.215686, 1 )
+unit = 3
+width = 132.0
+height = 183.7
+depth = 152.4
 
 [node name="Robot" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.079419, 0 )
 
 [node name="Ball" parent="." instance=ExtResource( 13 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.755741, 0.212657, -0.536618 )
