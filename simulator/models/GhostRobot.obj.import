@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/GhostRobot.obj-34db819885ed6587439242e9b0b73550.mesh"
+
+[deps]
+
+files=[ "res://.import/GhostRobot.obj-34db819885ed6587439242e9b0b73550.mesh" ]
+
+source_file="res://models/GhostRobot.obj"
+dest_files=[ "res://.import/GhostRobot.obj-34db819885ed6587439242e9b0b73550.mesh", "res://.import/GhostRobot.obj-34db819885ed6587439242e9b0b73550.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

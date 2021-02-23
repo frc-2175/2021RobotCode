@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/GamePiece.obj-35f160c449986d334983ee41aa602917.mesh"
+
+[deps]
+
+files=[ "res://.import/GamePiece.obj-35f160c449986d334983ee41aa602917.mesh" ]
+
+source_file="res://models/GamePiece.obj"
+dest_files=[ "res://.import/GamePiece.obj-35f160c449986d334983ee41aa602917.mesh", "res://.import/GamePiece.obj-35f160c449986d334983ee41aa602917.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true
