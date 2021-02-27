@@ -9,4 +9,4 @@ panorama = ExtResource( 1 )
 background_mode = 2
 background_sky = SubResource( 1 )
 tonemap_mode = 3
-tonemap_exposure = 1.18
+dof_blur_far_quality = 2

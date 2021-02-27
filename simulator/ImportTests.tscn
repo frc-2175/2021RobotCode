@@ -24,6 +24,7 @@ shadow_enabled = true
 
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.831654, 0.555294, 0, -0.555294, 0.831654, -0.829117, 1.45172, 8.75026 )
+fov = 92.0521
 script = ExtResource( 14 )
 target = NodePath("../Robot/Chassis/LookTarget")
 
