@@ -48,17 +48,17 @@ func _physics_process(_delta):
 	if "normal" in result:
 		# add drive force
 		var speed = get_speed()
-		var torque = speed * maxTorque * transform.basis.x
+		var torque = speed * maxTorque * global_transform.basis.x
 		var forceDirection = torque.cross(result.normal).normalized()
 		var forceMagnitude = torque.length() / wheelRadiusM
 		add_central_force(forceDirection * forceMagnitude)
 		
 		# add lateral drag
-		add_central_force(dragStrength * -linear_velocity.project(transform.basis.x))
+		add_central_force(dragStrength * -linear_velocity.project(global_transform.basis.x))
 		
 		# add parallel drag (to aggressively halt when stopped)
 		if abs(speed) < 0.05:
-			add_central_force(dragStrength * -linear_velocity.project(transform.basis.z))
+			add_central_force(dragStrength * -linear_velocity.project(global_transform.basis.z))
 
 func get_speed() -> float:
 	if sim.connected:

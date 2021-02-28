@@ -2,7 +2,7 @@ extends Spatial
 
 class_name Robot
 
-export(bool) var start_with_max_air = false
+var start_with_max_air = true
 
 var system_air_volume_cm3: float
 var extra_air_volume_cm3: float = 0.0
@@ -11,10 +11,28 @@ var atmospheric_pressure_Npcm2 = 10.13
 
 var intake_in: bool = true
 
+export(String, FILE, "*.json") var recording: String
+var is_recording: bool = false
+var is_playing: bool = false
+var recording_frames = []
+var playback_frames = []
+var playback_index = 0
+
+var input = RobotInput.new()
+
 func _ready():
 	system_air_volume_cm3 = get_system_air_volume_cm3()
 	if start_with_max_air:
 		extra_air_volume_cm3 = pressure_Npcm2_to_extra_air_volume_cm3(Math.psi2Npcm2(120) + atmospheric_pressure_Npcm2)
+
+	if len(recording) > 0:
+		input.set_frame(input.get_zero_frame())
+		
+		var file = File.new()
+		file.open(recording, File.READ)
+		var content = file.get_as_text()
+		file.close()
+		playback_frames = JSON.parse(content).result
 
 func get_volume_scale(extra_cm3: float = extra_air_volume_cm3):
 	if system_air_volume_cm3 == 0 or extra_cm3 == 0:
@@ -58,9 +76,17 @@ func vent_working_air_cm3(volume_cm3):
 	var adjusted_volume = volume_cm3 / get_volume_scale()
 	extra_air_volume_cm3 = max(0, extra_air_volume_cm3 - adjusted_volume)
 
-var toggle_active: bool = false
+var intake_toggle_active: bool = false
+var recording_toggle_active: bool = false
 
 func _process(delta):
+	if Input.get_action_strength("input_recording_play") > 0:
+		is_playing = true
+	
+	if is_playing and playback_index < len(playback_frames):
+		input.set_frame(playback_frames[playback_index])
+		playback_index += 1
+	
 	var current_pressure_psi = Math.Npcm22psi(get_air_pressure_Npcm2() - atmospheric_pressure_Npcm2)
 	if current_pressure_psi < 120:
 		var current_flow_rate_cfm = compressor_flow_rate_cfm(current_pressure_psi)
@@ -68,20 +94,26 @@ func _process(delta):
 		var new_air_cm3 = current_flow_rate_cm3ps * delta
 		extra_air_volume_cm3 += new_air_cm3
 	
-	if Input.get_action_strength("robot_intake_in") > 0:
+	if input.get_action_strength("robot_intake_in") > 0:
 		intake_in = true
-	elif Input.get_action_strength("robot_intake_out") > 0:
+	elif input.get_action_strength("robot_intake_out") > 0:
 		intake_in = false
-	elif !toggle_active and Input.get_action_strength("robot_intake_toggle") > 0:
+	elif !intake_toggle_active and input.get_action_strength("robot_intake_toggle") > 0:
 		intake_in = !intake_in
 	
-	toggle_active = Input.get_action_strength("robot_intake_toggle") > 0
+	if !recording_toggle_active and Input.get_action_strength("input_recording_toggle") > 0:
+		is_recording = not is_recording
+	
+	intake_toggle_active = input.get_action_strength("robot_intake_toggle") > 0
+	recording_toggle_active = Input.get_action_strength("input_recording_toggle") > 0
+	
+	record_inputs()
 
 func curvature_speed() -> float:
-	return Input.get_action_strength("robot_forward") - Input.get_action_strength("robot_backward")
+	return input.get_action_strength("robot_forward") - input.get_action_strength("robot_backward")
 
 func curvature_turn() -> float:
-	return Input.get_action_strength("robot_right") - Input.get_action_strength("robot_left")
+	return input.get_action_strength("robot_right") - input.get_action_strength("robot_left")
 
 # Direct port from the WPILib source
 func curvature_drive() -> Vector2:
@@ -127,4 +159,16 @@ func curvature_drive() -> Vector2:
 	return Vector2(leftMotorOutput, -rightMotorOutput)
 
 func intake_spin_speed():
-	return Input.get_action_strength("robot_intake_spin_in") - Input.get_action_strength("robot_intake_spin_out")
+	return input.get_action_strength("robot_intake_spin_in") - input.get_action_strength("robot_intake_spin_out")
+
+func record_inputs():
+	if is_recording:
+		recording_frames.append(input.get_frame())
+	elif len(recording_frames) > 0:
+		var json = JSON.print(recording_frames)
+		var file = File.new()
+		file.open("res://recordings/%d.json" % OS.get_unix_time(), File.WRITE)
+		file.store_string(json)
+		file.close()
+		
+		recording_frames = []
