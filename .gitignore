@@ -176,3 +176,4 @@ data_*/
 mono_crash.*.json
 
 simulator/recordings/*.json
+*.blend1
