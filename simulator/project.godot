@@ -122,8 +122,8 @@ _global_script_class_icons={
 
 [application]
 
-config/name="Godot Robot Sim"
-run/main_scene="res://ImportTests.tscn"
+config/name="2021 Robot Simulator"
+run/main_scene="res://HiveHeistField.tscn"
 config/icon="res://icon.png"
 
 [display]
@@ -216,4 +216,5 @@ common/physics_fps=120
 
 [rendering]
 
+quality/directional_shadow/size=8192
 environment/default_environment="res://default_env.tres"
