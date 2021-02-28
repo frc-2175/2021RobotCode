@@ -84,21 +84,6 @@ transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0.69975
 
 [node name="Robot" parent="." instance=ExtResource( 4 )]
 transform = Transform( -1, 0, -2.62268e-07, 0, 1, 0, 2.62268e-07, 0, -1, 1.08963, 0.155204, 7.75048 )
-recording = "res://recordings/1614482545.json"
 
 [node name="GamePiece7" parent="Robot" instance=ExtResource( 5 )]
 transform = Transform( -1, 0, 2.62268e-07, 0, 1, 0, -2.62268e-07, 0, -1, -0.00582135, 0.143652, 0.28813 )
-
-[node name="Robot2" parent="." instance=ExtResource( 4 )]
-transform = Transform( -1, 0, -2.62268e-07, 0, 1, 0, 2.62268e-07, 0, -1, -0.266778, 0.155204, 7.75048 )
-recording = "res://recordings/1614482578.json"
-
-[node name="GamePiece8" parent="Robot2" instance=ExtResource( 5 )]
-transform = Transform( -1, 0, 2.62268e-07, 0, 1, 0, -2.62268e-07, 0, -1, 0.0277021, 0.143652, 0.28813 )
-
-[node name="Robot3" parent="." instance=ExtResource( 4 )]
-transform = Transform( -1, 0, -2.62268e-07, 0, 1, 0, 2.62268e-07, 0, -1, -1.82976, 0.155204, 7.75048 )
-recording = "res://recordings/1614482664.json"
-
-[node name="GamePiece8" parent="Robot3" instance=ExtResource( 5 )]
-transform = Transform( -1, 0, 2.62268e-07, 0, 1, 0, -2.62268e-07, 0, -1, 0.0277021, 0.143652, 0.28813 )
