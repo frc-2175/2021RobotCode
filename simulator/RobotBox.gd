@@ -13,6 +13,14 @@ export(float) var depth = 12
 export(float, 0.03125, 0.25) var thickness_inches = 0.125
 export(bool) var solid = false
 
+export(bool) var recreate_children = false
+
+var resource_cache = {}
+func load_resource(path):
+	if not path in resource_cache:
+		resource_cache[path] = load(path)
+	return resource_cache[path]
+
 func set_unit(new_unit):
 	var wm = Math.length2m(width, unit)
 	var hm = Math.length2m(height, unit)
@@ -25,6 +33,10 @@ func set_unit(new_unit):
 	property_list_changed_notify()
 
 func ensure_children():
+	if recreate_children:
+		recreate_children = false
+		self.remove_child($Mesh)
+	
 	var mesh: MeshInstance = get_node_or_null(@"Mesh")
 	if not mesh:
 		mesh = MeshInstance.new()
@@ -71,6 +83,7 @@ func _editor_process():
 	RobotUtil.reset_rotation(mesh)
 	RobotUtil.reset_children(mesh)
 	mesh.scale = Vector3(w/2, h/2, d/2)
+	mesh.mesh.surface_set_material(0, load_resource(RobotUtil.get_materials()[material].material_path))
 	
 	var body: RigidBody = get_parent()
 	if body:

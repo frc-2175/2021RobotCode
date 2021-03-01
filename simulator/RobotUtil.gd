@@ -5,14 +5,21 @@ class_name RobotUtil
 static func get_materials():
 	return {
 		Aluminum = {
-			density_kgpm3 = 2700
+			density_kgpm3 = 2700,
+			material_path = "res://materials/SimpleAluminumMaterial.tres",
 		},
 		Polycarb = {
-			density_kgpm3 = 1360
+			density_kgpm3 = 1360,
+			material_path = "res://materials/DirtyGlassMaterial.tres",
 		},
 		Steel = {
-			density_kgpm3 = 7859
-		}
+			density_kgpm3 = 7859,
+			material_path = "res://materials/SimpleSteelMaterial.tres",
+		},
+		Rubber = {
+			density_kgpm3 = 1500, # totally made up!
+			material_path = "res://materials/SimpleRubberMaterial.tres",
+		},
 	}
 
 static func reset_translation(node: Spatial):

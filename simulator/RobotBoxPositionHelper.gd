@@ -15,12 +15,13 @@ func _editor_process():
 	var h = Math.length2m(_box.height, _box.unit)
 	var d = Math.length2m(_box.depth, _box.unit)
 	
-	self.global_transform.origin = _box.global_transform.origin + Vector3(
-		w/2 * (x_position-1),
-		h/2 * (y_position-1),
-		d/2 * (z_position-1)
+	self.global_transform.origin = (
+		_box.global_transform.origin
+		+ (w/2 * (x_position-1)) * _box.global_transform.basis.x
+		+ (h/2 * (y_position-1)) * _box.global_transform.basis.y
+		+ (d/2 * (z_position-1)) * _box.global_transform.basis.z
 	)
-
+	
 func _process(_delta):
 	if Engine.editor_hint:
 		return _editor_process()

@@ -101,7 +101,7 @@ func should_launch() -> bool:
 					MotorShootMode.LessThan:
 						return motor_value < motor_shoot_speed_threshold
 	else:
-		return Input.get_action_strength("robot_shoot") > 0
+		return robot.input.get_action_strength("robot_shoot") > 0
 	
 	printerr("RobotLauncher '%s' has a bug! Could not decide whether or not to launch a game piece." % self.name)
 	return false
