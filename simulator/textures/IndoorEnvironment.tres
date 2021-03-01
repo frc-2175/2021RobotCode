@@ -10,3 +10,5 @@ background_mode = 2
 background_sky = SubResource( 1 )
 tonemap_mode = 3
 tonemap_exposure = 1.7
+dof_blur_far_quality = 2
+dof_blur_near_quality = 2
