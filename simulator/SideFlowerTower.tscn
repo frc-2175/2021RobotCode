@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://models/Field/SideFlowerTower.obj" type="ArrayMesh" id=1]
+
+[node name="SideFlowerTower" type="MeshInstance"]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 2.96942, 0.100039, -0.621861 )
+mesh = ExtResource( 1 )
+material/0 = null
+material/1 = null
