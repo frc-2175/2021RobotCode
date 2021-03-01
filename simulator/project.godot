@@ -140,6 +140,7 @@ settings/fps/force_fps=60
 
 window/size/width=1600
 window/size/height=900
+window/vsync/use_vsync=false
 
 [editor_plugins]
 
@@ -229,6 +230,7 @@ input_recording_play={
 3d_physics/layer_3="robot components"
 3d_physics/layer_4="static robot components"
 3d_physics/layer_5="intake wheels"
+3d_render/layer_11="reflection preview"
 
 [physics]
 
