@@ -3,7 +3,7 @@ extends CollisionShape
 
 class_name RobotCylinder
 
-export(String, "Aluminum", "Polycarb", "Steel") var material = "Aluminum"
+export(String, "Aluminum", "Polycarb", "Steel", "Rubber") var material = "Aluminum"
 
 export(float, 0.25, 2) var radius_inches = 1
 export(float, 1, 60) var length_inches = 12
@@ -12,6 +12,14 @@ export(float, 0.03125, 0.25) var thickness_inches = 0.125
 export(bool) var solid = false
 
 export(bool) var is_intake_wheel = false
+
+export(bool) var recreate_children = false
+
+var resource_cache = {}
+func load_resource(path):
+	if not path in resource_cache:
+		resource_cache[path] = load(path)
+	return resource_cache[path]
 
 func get_mass_kg():
 	var r = Math.in2m(radius_inches)
@@ -24,6 +32,12 @@ func get_mass_kg():
 	return volume_m3 * density_kgpm3
 
 func ensure_children():
+	if recreate_children:
+		recreate_children = false
+		self.remove_child($Mesh)
+		self.remove_child($Start)
+		self.remove_child($End)
+		
 	var mesh = get_node_or_null(@"Mesh")
 	if not mesh:
 		mesh = MeshInstance.new()
@@ -70,6 +84,7 @@ func _editor_process():
 	RobotUtil.reset_rotation(mesh)
 	RobotUtil.reset_children(mesh)
 	mesh.scale = Vector3(r, h/2, r)
+	mesh.mesh.surface_set_material(0, load_resource(RobotUtil.get_materials()[material].material_path))
 	
 	var start = $Start as Spatial
 	start.translation = Vector3(0, -h/2, 0)

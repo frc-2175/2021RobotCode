@@ -3,45 +3,45 @@
 [ext_resource path="res://textures/grunge/2K-dirt_2.png" type="Texture" id=1]
 [ext_resource path="res://textures/grunge/2K-grunge_1.png" type="Texture" id=2]
 
-[sub_resource type="VisualShaderNodeVectorOp" id=11]
+[sub_resource type="VisualShaderNodeVectorOp" id=1]
 
-[sub_resource type="VisualShaderNodeColorConstant" id=12]
+[sub_resource type="VisualShaderNodeColorConstant" id=2]
 constant = Color( 0.662109, 0.662109, 0.662109, 1 )
 
-[sub_resource type="VisualShaderNodeVectorOp" id=13]
+[sub_resource type="VisualShaderNodeVectorOp" id=3]
 default_input_values = [ 0, Vector3( 0, 0, 0 ), 1, Vector3( 1, 1, 1 ) ]
 operator = 2
 
-[sub_resource type="VisualShaderNodeVectorOp" id=14]
+[sub_resource type="VisualShaderNodeVectorOp" id=4]
 default_input_values = [ 0, Vector3( 0, 0, 0 ), 1, Vector3( 1, 1, 1 ) ]
 operator = 2
 
-[sub_resource type="VisualShaderNodeVectorOp" id=15]
+[sub_resource type="VisualShaderNodeVectorOp" id=5]
 operator = 2
 
-[sub_resource type="VisualShaderNodeScalarConstant" id=16]
+[sub_resource type="VisualShaderNodeScalarConstant" id=6]
 constant = 0.2
 
-[sub_resource type="VisualShaderNodeScalarConstant" id=17]
+[sub_resource type="VisualShaderNodeScalarConstant" id=7]
 constant = 0.5
 
-[sub_resource type="VisualShaderNodeScalarOp" id=18]
+[sub_resource type="VisualShaderNodeScalarOp" id=8]
 
-[sub_resource type="VisualShaderNodeTexture" id=6]
+[sub_resource type="VisualShaderNodeTexture" id=9]
 output_port_for_preview = 0
 source = 1
 
-[sub_resource type="VisualShaderNodeInput" id=7]
+[sub_resource type="VisualShaderNodeInput" id=10]
 output_port_for_preview = 0
 input_name = "screen_uv"
 
-[sub_resource type="VisualShaderNodeScalarConstant" id=10]
+[sub_resource type="VisualShaderNodeScalarConstant" id=11]
 constant = 0.04
 
-[sub_resource type="VisualShaderNodeTexture" id=19]
+[sub_resource type="VisualShaderNodeTexture" id=12]
 texture = ExtResource( 1 )
 
-[sub_resource type="VisualShaderNodeTexture" id=20]
+[sub_resource type="VisualShaderNodeTexture" id=13]
 texture = ExtResource( 2 )
 
 [resource]
@@ -124,30 +124,30 @@ void light() {
 graph_offset = Vector2( -1151, -144.5 )
 modes/depth_draw = 1
 nodes/fragment/0/position = Vector2( -140, 180 )
-nodes/fragment/3/node = SubResource( 6 )
+nodes/fragment/3/node = SubResource( 9 )
 nodes/fragment/3/position = Vector2( -340, 340 )
-nodes/fragment/4/node = SubResource( 7 )
+nodes/fragment/4/node = SubResource( 10 )
 nodes/fragment/4/position = Vector2( -560, 360 )
-nodes/fragment/7/node = SubResource( 10 )
+nodes/fragment/7/node = SubResource( 11 )
 nodes/fragment/7/position = Vector2( -560, 240 )
-nodes/fragment/8/node = SubResource( 19 )
+nodes/fragment/8/node = SubResource( 12 )
 nodes/fragment/8/position = Vector2( -1060, -340 )
-nodes/fragment/9/node = SubResource( 20 )
+nodes/fragment/9/node = SubResource( 13 )
 nodes/fragment/9/position = Vector2( -1060, 0 )
-nodes/fragment/13/node = SubResource( 11 )
+nodes/fragment/13/node = SubResource( 1 )
 nodes/fragment/13/position = Vector2( -620, -20 )
-nodes/fragment/14/node = SubResource( 12 )
+nodes/fragment/14/node = SubResource( 2 )
 nodes/fragment/14/position = Vector2( -580, -140 )
-nodes/fragment/16/node = SubResource( 13 )
+nodes/fragment/16/node = SubResource( 3 )
 nodes/fragment/16/position = Vector2( -820, -200 )
-nodes/fragment/17/node = SubResource( 14 )
+nodes/fragment/17/node = SubResource( 4 )
 nodes/fragment/17/position = Vector2( -820, 140 )
-nodes/fragment/18/node = SubResource( 15 )
+nodes/fragment/18/node = SubResource( 5 )
 nodes/fragment/18/position = Vector2( -420, -80 )
-nodes/fragment/19/node = SubResource( 16 )
+nodes/fragment/19/node = SubResource( 6 )
 nodes/fragment/19/position = Vector2( -1040, -100 )
-nodes/fragment/20/node = SubResource( 17 )
+nodes/fragment/20/node = SubResource( 7 )
 nodes/fragment/20/position = Vector2( -1040, 240 )
-nodes/fragment/21/node = SubResource( 18 )
+nodes/fragment/21/node = SubResource( 8 )
 nodes/fragment/21/position = Vector2( -340, 200 )
 nodes/fragment/connections = PoolIntArray( 3, 0, 0, 5, 4, 0, 3, 0, 8, 0, 16, 0, 16, 0, 13, 0, 9, 0, 17, 0, 17, 0, 13, 1, 14, 0, 18, 0, 13, 0, 18, 1, 18, 0, 0, 0, 19, 0, 16, 1, 20, 0, 17, 1, 7, 0, 21, 1, 13, 0, 21, 0, 21, 0, 0, 3 )
