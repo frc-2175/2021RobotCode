@@ -21,7 +21,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.03622, 6.91616 )
 script = ExtResource( 4 )
 
 [node name="Chassis" type="RigidBody" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.425231, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.641119, 0 )
 collision_layer = 12
 collision_mask = 5
 mass = 9.2811
@@ -80,14 +80,14 @@ nodes/node_a = NodePath("../Chassis")
 nodes/node_b = NodePath("../BackLeft")
 
 [node name="RobotIntakeArea" type="Area" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.770834, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.801861, 0 )
 collision_layer = 0
 collision_mask = 2
 script = ExtResource( 1 )
 launcher = NodePath("../RobotLauncher")
 
 [node name="CollisionShape" type="CollisionShape" parent="RobotIntakeArea"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0385773, 0.0406318 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0385773, -0.0870872 )
 shape = SubResource( 3 )
 
 [node name="RobotLauncher" type="Spatial" parent="."]
