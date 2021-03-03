@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/AutoLine.obj-5567ddea6b589b6caed31af559121b63.mesh"
+
+[deps]
+
+files=[ "res://.import/AutoLine.obj-5567ddea6b589b6caed31af559121b63.mesh" ]
+
+source_file="res://models/AutoLine.obj"
+dest_files=[ "res://.import/AutoLine.obj-5567ddea6b589b6caed31af559121b63.mesh", "res://.import/AutoLine.obj-5567ddea6b589b6caed31af559121b63.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

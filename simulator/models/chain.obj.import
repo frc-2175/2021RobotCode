@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/chain.obj-a0fc2eadcd831a7d23b69b5bf7f924c3.mesh"
+
+[deps]
+
+files=[ "res://.import/chain.obj-a0fc2eadcd831a7d23b69b5bf7f924c3.mesh" ]
+
+source_file="res://models/chain.obj"
+dest_files=[ "res://.import/chain.obj-a0fc2eadcd831a7d23b69b5bf7f924c3.mesh", "res://.import/chain.obj-a0fc2eadcd831a7d23b69b5bf7f924c3.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

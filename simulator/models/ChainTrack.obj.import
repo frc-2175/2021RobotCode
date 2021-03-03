@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/ChainTrack.obj-cd298cecc937513633b6523a99e85eed.mesh"
+
+[deps]
+
+files=[ "res://.import/ChainTrack.obj-cd298cecc937513633b6523a99e85eed.mesh" ]
+
+source_file="res://models/ChainTrack.obj"
+dest_files=[ "res://.import/ChainTrack.obj-cd298cecc937513633b6523a99e85eed.mesh", "res://.import/ChainTrack.obj-cd298cecc937513633b6523a99e85eed.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true
