@@ -6,4 +6,7 @@ onready var target_node = get_node(target) as Spatial
 
 func _process(_delta):
 	if target_node:
-		look_at(target_node.global_transform.origin, Vector3.UP)
+		var pos = target_node.global_transform.origin
+		if target_node.has_method("get_lookat_position"):
+			pos = target_node.get_lookat_position()
+		look_at(pos, Vector3.UP)
