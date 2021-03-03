@@ -134,7 +134,8 @@ config/icon="res://icon.png"
 
 [debug]
 
-settings/fps/force_fps=60
+settings/fps/force_fps=144
+settings/stdout/print_fps=true
 
 [display]
 
@@ -242,7 +243,7 @@ DropSideTower={
 
 [physics]
 
-common/physics_fps=120
+common/physics_fps=240
 
 [rendering]
 
