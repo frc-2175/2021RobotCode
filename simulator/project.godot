@@ -140,6 +140,8 @@ settings/fps/force_fps=60
 
 window/size/width=1600
 window/size/height=900
+window/size/test_width=1920
+window/size/test_height=1080
 window/vsync/use_vsync=false
 
 [editor_plugins]
@@ -238,9 +240,11 @@ common/physics_fps=120
 
 [rendering]
 
+quality/2d/use_nvidia_rect_flicker_workaround=true
 quality/filters/anisotropic_filter_level=16
 quality/directional_shadow/size=8192
 quality/filters/use_nearest_mipmap_filter=true
 quality/subsurface_scattering/quality=2
+quality/voxel_cone_tracing/high_quality=true
 quality/filters/msaa=4
 environment/default_environment="res://default_env.tres"
