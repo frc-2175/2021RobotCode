@@ -20,6 +20,8 @@ var maxTorque = 1.5 # nah screw math
 
 enum OfflineDriveSide {Left, Right}
 export(OfflineDriveSide) var offline_drive_side
+export(float, 0, 2) var speed_multiplier = 1
+export(float, 0, 2) var drag_multiplier = 1
 
 onready var sim: RobotSimClient = RobotUtil.find_parent_by_script(self, RobotSimClient)
 onready var robot: Robot = RobotUtil.find_parent_by_script(self, Robot)
@@ -53,12 +55,14 @@ func _physics_process(_delta):
 		var forceMagnitude = torque.length() / wheelRadiusM
 		add_central_force(forceDirection * forceMagnitude)
 		
+		var finalDragStrength = dragStrength * drag_multiplier
+		
 		# add lateral drag
-		add_central_force(dragStrength * -linear_velocity.project(global_transform.basis.x))
+		add_central_force(finalDragStrength * -linear_velocity.project(global_transform.basis.x))
 		
 		# add parallel drag (to aggressively halt when stopped)
 		if abs(speed) < 0.05:
-			add_central_force(dragStrength * -linear_velocity.project(global_transform.basis.z))
+			add_central_force(finalDragStrength * -linear_velocity.project(global_transform.basis.z))
 
 func get_speed() -> float:
 	if sim.connected:
@@ -74,9 +78,9 @@ func get_speed() -> float:
 		var curvatureOutputs = robot.curvature_drive()
 		match offline_drive_side:
 			OfflineDriveSide.Left:
-				return curvatureOutputs[0]
+				return curvatureOutputs[0] * speed_multiplier
 			OfflineDriveSide.Right:
-				return curvatureOutputs[1]
+				return curvatureOutputs[1] * speed_multiplier
 			_:
 				printerr("Unrecognized offline drive side in wheel: ", offline_drive_side)
 				return 0.0
