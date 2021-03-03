@@ -20,6 +20,9 @@ var playback_index = 0
 
 var input = RobotInput.new()
 
+func get_lookat_position():
+	return $Chassis.global_transform.origin
+
 func _ready():
 	system_air_volume_cm3 = get_system_air_volume_cm3()
 	if start_with_max_air:
