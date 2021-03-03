@@ -13,6 +13,8 @@ export(float) var depth = 12
 export(float, 0.03125, 0.25) var thickness_inches = 0.125
 export(bool) var solid = false
 
+export(Material) var visual_material
+
 export(bool) var recreate_children = false
 
 var resource_cache = {}
@@ -83,7 +85,10 @@ func _editor_process():
 	RobotUtil.reset_rotation(mesh)
 	RobotUtil.reset_children(mesh)
 	mesh.scale = Vector3(w/2, h/2, d/2)
-	mesh.mesh.surface_set_material(0, load_resource(RobotUtil.get_materials()[material].material_path))
+	if visual_material:
+		mesh.mesh.surface_set_material(0, visual_material)
+	else:
+		mesh.mesh.surface_set_material(0, load_resource(RobotUtil.get_materials()[material].material_path))
 	
 	var body: RigidBody = get_parent()
 	if body:
