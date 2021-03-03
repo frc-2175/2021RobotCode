@@ -368,7 +368,7 @@ device_id = 3
 motor_shoot_when = 1
 
 [node name="NavX" type="Spatial" parent="Chassis"]
-transform = Transform( -1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, -6.70552e-08, 0, -7.37607e-07 )
+transform = Transform( -1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, -7.07805e-08, 0, -7.78586e-07 )
 script = ExtResource( 15 )
 
 [node name="Wheels" type="Spatial" parent="."]
@@ -383,27 +383,12 @@ box = NodePath("../../Chassis/LeftDriveRail")
 
 [node name="Front" parent="Wheels/Left" instance=ExtResource( 12 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0306288, 0, -0.083 )
-wheelDiameterIn = 5.0
-wheelWidthIn = 1.0
-controller_type = 0
-motor_id = 1
-offline_drive_side = 0
 
 [node name="Middle" parent="Wheels/Left" instance=ExtResource( 12 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.031, -0.002, -0.349 )
-wheelDiameterIn = 5.0
-wheelWidthIn = 1.0
-controller_type = 0
-motor_id = 1
-offline_drive_side = 0
 
 [node name="Back" parent="Wheels/Left" instance=ExtResource( 12 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.031, 0, -0.699 )
-wheelDiameterIn = 5.0
-wheelWidthIn = 1.0
-controller_type = 0
-motor_id = 1
-offline_drive_side = 0
 
 [node name="Front2Chassis" type="Generic6DOFJoint" parent="Wheels/Left"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.083 )
@@ -430,25 +415,16 @@ box = NodePath("../../Chassis/RightDriveRail")
 
 [node name="Front" parent="Wheels/Right" instance=ExtResource( 12 )]
 transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, -0.031, 0, -0.083 )
-wheelDiameterIn = 5.0
-wheelWidthIn = 1.0
-controller_type = 0
 motor_id = 2
 offline_drive_side = 1
 
 [node name="Middle" parent="Wheels/Right" instance=ExtResource( 12 )]
 transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, -0.031, -0.00199997, -0.349 )
-wheelDiameterIn = 5.0
-wheelWidthIn = 1.0
-controller_type = 0
 motor_id = 2
 offline_drive_side = 1
 
 [node name="Back" parent="Wheels/Right" instance=ExtResource( 12 )]
 transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, -0.031, 0, -0.699 )
-wheelDiameterIn = 5.0
-wheelWidthIn = 1.0
-controller_type = 0
 motor_id = 2
 offline_drive_side = 1
 
@@ -580,7 +556,7 @@ nodes/node_b = NodePath("../../../../Chassis")
 collision/exclude_nodes = false
 
 [node name="Intake" type="RigidBody" parent="Intake/BotFront/ArmPosition"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -4.05703e-05, -5.96046e-08, 0.292001 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -4.05274e-05, -5.96046e-08, 0.292001 )
 collision_layer = 20
 collision_mask = 5
 mass = 4.47897
@@ -589,13 +565,13 @@ can_sleep = false
 angular_damp = 1.0
 
 [node name="Motor" type="Spatial" parent="Intake/BotFront/ArmPosition/Intake"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00753717, 0, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00753721, 0, 0 )
 script = ExtResource( 3 )
 controller_type = 2
 motor_id = 3
 
 [node name="Axle" type="CollisionShape" parent="Intake/BotFront/ArmPosition/Intake"]
-transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 4.05703e-05, 0, 0 )
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 4.05274e-05, 0, 0 )
 shape = SubResource( 23 )
 script = ExtResource( 20 )
 material = "Steel"
@@ -687,7 +663,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0254, 0 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0254, 0 )
 
 [node name="RobotBox" type="CollisionShape" parent="Intake/BotFront/ArmPosition/Intake"]
-transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -0.00126003, 0, 0 )
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -0.00126007, 0, 0 )
 shape = SubResource( 28 )
 script = ExtResource( 6 )
 material = "Aluminum"

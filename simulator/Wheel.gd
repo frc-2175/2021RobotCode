@@ -8,7 +8,7 @@ var in2cm = 2.54
 var wheelRadiusM: float
 var wheelWidthM: float
 
-var dragStrength = 30
+var dragStrength = 10
 
 enum ControllerType {TalonSRX, VictorSPX}
 export(ControllerType) var controller_type
