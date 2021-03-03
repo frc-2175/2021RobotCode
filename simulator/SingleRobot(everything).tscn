@@ -21,14 +21,13 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.03622, 6.91616 )
 script = ExtResource( 4 )
 
 [node name="Chassis" type="RigidBody" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.641119, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.398235, 0 )
 collision_layer = 12
 collision_mask = 5
 mass = 9.2811
 can_sleep = false
 
 [node name="RobotBox" type="CollisionShape" parent="Chassis"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0290656, 0 )
 shape = SubResource( 1 )
 script = ExtResource( 5 )
 material = "Aluminum"
@@ -45,19 +44,42 @@ transform = Transform( 0.2286, 0, 0, 0, 0.127, 0, 0, 0, 0.3048, 0, 0, 0 )
 mesh = SubResource( 2 )
 material/0 = null
 
+[node name="RobotIntakeArea" type="Area" parent="Chassis"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.189808, 0 )
+collision_layer = 0
+collision_mask = 2
+script = ExtResource( 1 )
+launcher = NodePath("../RobotLauncher")
+
+[node name="CollisionShape" type="CollisionShape" parent="Chassis/RobotIntakeArea"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.101929, -0.0870872 )
+shape = SubResource( 3 )
+
+[node name="RobotLauncher" type="Spatial" parent="Chassis"]
+transform = Transform( -4.2167e-08, 1.57369e-07, 1, 0.965926, 0.258819, 0, -0.258819, 0.965926, -1.62921e-07, 0.0384928, 0.254846, -0.239034 )
+script = ExtResource( 6 )
+
 [node name="FrontLeft" parent="." instance=ExtResource( 2 )]
 transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, -0.2, -0.8, -0.2 )
+speed_multiplier = 0.6
+drag_multiplier = 0.4
 
 [node name="FrontRight" parent="." instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, -0.8, -0.2 )
 offline_drive_side = 1
+speed_multiplier = 0.6
+drag_multiplier = 0.4
 
 [node name="BackRight" parent="." instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, -0.8, 0.2 )
 offline_drive_side = 1
+speed_multiplier = 0.6
+drag_multiplier = 0.4
 
 [node name="BackLeft" parent="." instance=ExtResource( 2 )]
 transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, -0.2, -0.8, 0.2 )
+speed_multiplier = 0.6
+drag_multiplier = 0.4
 
 [node name="JointFL" type="Generic6DOFJoint" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.21124, -0.732589, -0.221762 )
@@ -78,18 +100,3 @@ nodes/node_b = NodePath("../BackRight")
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.194836, -0.732589, 0.21513 )
 nodes/node_a = NodePath("../Chassis")
 nodes/node_b = NodePath("../BackLeft")
-
-[node name="RobotIntakeArea" type="Area" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.801861, 0 )
-collision_layer = 0
-collision_mask = 2
-script = ExtResource( 1 )
-launcher = NodePath("../RobotLauncher")
-
-[node name="CollisionShape" type="CollisionShape" parent="RobotIntakeArea"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0385773, -0.0870872 )
-shape = SubResource( 3 )
-
-[node name="RobotLauncher" type="Spatial" parent="."]
-transform = Transform( -4.2167e-08, 1.57369e-07, -1, 0.965926, 0.258819, 0, 0.258819, -0.965926, -1.62921e-07, 0, -0.317648, 0.232766 )
-script = ExtResource( 6 )
