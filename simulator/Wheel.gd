@@ -40,6 +40,8 @@ func _process(_delta):
 		var shape = collider.shape as BoxShape
 		shape.extents = Vector3(wheelWidthM/2, wheelRadiusM, wheelRadiusM)
 
+var prev_pos
+
 func _physics_process(_delta):
 	if Engine.editor_hint:
 		return
@@ -63,6 +65,12 @@ func _physics_process(_delta):
 		# add parallel drag (to aggressively halt when stopped)
 		if abs(speed) < 0.05:
 			add_central_force(finalDragStrength * -linear_velocity.project(global_transform.basis.z))
+		
+		if linear_velocity.length() < 0.1 and prev_pos:
+			self.global_transform.origin = prev_pos
+		
+		prev_pos = self.global_transform.origin
+			
 
 func get_speed() -> float:
 	if sim.connected:
