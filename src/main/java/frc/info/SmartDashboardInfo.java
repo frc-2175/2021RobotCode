@@ -2,6 +2,7 @@ package frc.info;
 
 import java.util.Properties;
 
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.ServiceLocator;
 
@@ -36,7 +37,7 @@ public class SmartDashboardInfo {
 
     public SmartDashboardInfo() {
 		ServiceLocator.register(this);
-        Properties properties = RobotInfo.loadProperties("/home/lvuser/bot.properties");
+        Properties properties = RobotInfo.loadProperties(Filesystem.getDeployDirectory() + "/bot.properties");
         isComp = Boolean.parseBoolean((String) properties.get("isComp"));
         populate();
     }

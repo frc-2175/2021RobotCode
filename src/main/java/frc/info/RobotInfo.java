@@ -11,6 +11,7 @@ import java.util.Properties;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import edu.wpi.first.wpilibj.Filesystem;
 import frc.MotorWrapper;
 import frc.ServiceLocator;
 import frc.SolenoidWrapper;
@@ -41,7 +42,7 @@ public class RobotInfo {
 
     public RobotInfo() {
 		ServiceLocator.register(this);
-        Properties properties = loadProperties("/home/lvuser/bot.properties");
+        Properties properties = loadProperties(Filesystem.getDeployDirectory() + "/bot.properties");
         isComp = Boolean.parseBoolean((String) properties.get("isComp"));
         info = new HashMap<>();
         populate();
