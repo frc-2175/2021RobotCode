@@ -69,7 +69,7 @@ public class MotorWrapper {
 		}
 	}
 
-	public int getSelectedSensorPosition(int pidIdx) {
+	public double getSelectedSensorPosition(int pidIdx) {
 		if (isTalon) {
 			return talon.getSelectedSensorPosition(pidIdx);
 		} else {
