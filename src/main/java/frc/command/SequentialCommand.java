@@ -17,7 +17,7 @@ public class SequentialCommand extends Command {
     /**
      * @param commands an array of the commands to be run sequentially
      */
-    public SequentialCommand(Command[] commands) {
+    public SequentialCommand(Command... commands) {
         this.commands = commands;
 		logger = ServiceLocator.get(Logger.class).newWithExtraFields(new LogField("CommandType", "Sequential"));
     }
@@ -53,7 +53,9 @@ public class SequentialCommand extends Command {
     }
 
     public void end() {
-        commands[commands.length - 1]._end();
+        if(commands.length != 0) {
+            commands[index]._end();
+        }
 	}
 
 	@Override

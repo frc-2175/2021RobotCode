@@ -19,18 +19,28 @@ public class CommandRunner {
 
     public void runCommand() {
         if(!hasRunInit) {
-			command._init();
+            command._init();
             hasRunInit = true;
-            command._execute();
-        } else {
-            if(!command._isFinished()) {
-                command._execute();
+            if(command._isFinished()) {
+                command._end();
+                hasRunEnd = true;
             } else {
-                if(!hasRunEnd) {
-                    command._end();
-                    hasRunEnd = true;
-                }
+                command._execute();
             }
+        } else if(!hasRunEnd) {
+            if(command._isFinished()) {
+                command._end();
+                hasRunEnd = true;
+            } else {
+                command._execute();
+            }
+        }
+    }
+
+    public void endCommand() {
+        if (!hasRunEnd) {
+            command._end();
+            hasRunEnd = true;
         }
     }
 

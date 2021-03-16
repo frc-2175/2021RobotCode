@@ -7,37 +7,45 @@
 
 package frc.robot;
 
+import java.io.File;
+
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.Bezier;
-import frc.ServiceLocator;
-import frc.Vector;
+import frc.command.AutoFeedCommand;
 import frc.command.Command;
 import frc.command.CommandRunner;
 import frc.command.ParallelCommand;
+import frc.command.ParallelRaceCommand;
+import frc.command.RunWhileCommand;
 import frc.command.SequentialCommand;
-import frc.command.autonomous.ActuatePanelIntakeOutCommand;
-import frc.command.autonomous.DriveForwardInchesCommand;
-import frc.command.autonomous.HatchOuttakeCommand;
-import frc.command.autonomous.RollerBarOutCommand;
-import frc.command.autonomous.SpinInHatchCommand;
-import frc.command.autonomous.TurningDegreesCommand;
-import frc.command.autonomous.TurningLeft;
-import frc.command.autonomous.TurningRight;
-import frc.command.autonomous.DriveStraightCommand;
-import frc.command.autonomous.DriveStraightBetterCommand;
+import frc.command.autonomous.FollowPathCommand;
+import frc.command.autonomous.IntakeCommand;
+import frc.command.autonomous.ShootCommand;
+import frc.command.autonomous.TimerCommand;
 import frc.info.RobotInfo;
-import frc.info.SmartDashboardInfo;
+import frc.logging.JSONHandler;
+import frc.logging.LogField;
 import frc.logging.LogHandler;
+import frc.logging.LogServer;
 import frc.logging.Logger;
+import frc.logging.SmartDashboardHandler;
 import frc.logging.StdoutHandler;
-import frc.subsystem.CargoIntakeSubsystem;
-import frc.subsystem.ClimbingSubsystem;
+import frc.math.DrivingUtility;
+import frc.math.MathUtility;
+import frc.subsystem.ClimberSubsystem;
+import frc.subsystem.ControlPanelSubsystem;
 import frc.subsystem.DrivetrainSubsystem;
-import frc.subsystem.ElevatorSubsystem;
-import frc.subsystem.HatchIntakeSubsystem;
+import frc.subsystem.FeederSubsystem;
+import frc.subsystem.IntakeSubsystem;
+import frc.subsystem.MagazineSubsystem;
+import frc.subsystem.ShooterSubsystem;
+import frc.subsystem.ShooterSubsystem.Mode;
 import frc.subsystem.VisionSubsystem;
 
 /**
@@ -45,28 +53,43 @@ import frc.subsystem.VisionSubsystem;
  * functions corresponding to each mode, as described in the TimedRobot
  * documentation. If you change the name of this class or the package after
  * creating this project, you must also update the build.gradle file in the
- * project. - FRC Team 222222222222222 1111111 77777777777777777777
- * 555555555555555555 2:::::::::::::::22 1::::::1 7::::::::::::::::::7
- * 5::::::::::::::::5 2::::::222222:::::2 1:::::::1 7::::::::::::::::::7
- * 5::::::::::::::::5 2222222 2:::::2 111:::::1 777777777777:::::::7
- * 5:::::555555555555 2:::::2 1::::1 7::::::7 5:::::5 2:::::2 1::::1 7::::::7
- * 5:::::5 2222::::2 1::::1 7::::::7 5:::::5555555555 22222::::::22 1::::l
- * 7::::::7 5:::::::::::::::5 22::::::::222 1::::l 7::::::7 555555555555:::::5
- * 2:::::22222 1::::l 7::::::7 5:::::5 2:::::2 1::::l 7::::::7 5:::::5 2:::::2
- * 1::::l 7::::::7 5555555 5:::::5 2:::::2 222222 111::::::111 7::::::7
- * 5::::::55555::::::5 2::::::2222222:::::2 1::::::::::1 7::::::7
- * 55:::::::::::::55 2::::::::::::::::::2 1::::::::::1 7::::::7 55:::::::::55
- * 22222222222222222222 111111111111 77777777 555555555 The Fighting Calculators
+ * project.
  */
 public class Robot extends TimedRobot {
-	public static final int JOYSTICK_TRIGGER = 1;
+  Logger logger = new Logger(new LogHandler[] {
+    new StdoutHandler(),
+    new JSONHandler("/home/lvusr/logs/test.log"),
+    new SmartDashboardHandler()
+  }, true);
 
-	public double previousJoystick1Value = 0;
-	public double previousJoystick3Value = 0;
-	public static final double TOPLINE = .6;
-	public static final double BOTTOMLINE = -.6;
-
-	public static final int GAMEPAD_X = 1;
+  WPI_VictorSPX leftMotor1;
+  WPI_VictorSPX leftMotor2;
+  WPI_TalonSRX rightMotor1;
+  WPI_VictorSPX rightMotor2;
+  Joystick gamepad;
+  Joystick leftJoystick;
+  Joystick rightJoystick;
+  public RobotInfo robotInfo;
+  public IntakeSubsystem intakeSubsystem;
+  public ShooterSubsystem shooterSubsystem;
+  public ControlPanelSubsystem controlPanelSubsystem;
+  public DrivetrainSubsystem drivetrainSubsystem;
+  public FeederSubsystem feederSubsystem;
+  public MagazineSubsystem magazineSubsystem;
+  private CommandRunner autonomousCommand;
+  private CommandRunner teleopAutoShootCommand;
+  public ClimberSubsystem climberSubsystem;
+  public VisionSubsystem visionSubsystem;
+  public CommandRunner aimTurretWithVisionCommand; 
+  
+  
+  /*
+      (y)
+  (x)     (b)
+      (a)
+  */
+  public static final int JOYSTICK_TRIGGER = 1; 
+  public static final int GAMEPAD_X = 1;
 	public static final int GAMEPAD_A = 2;
 	public static final int GAMEPAD_B = 3;
 	public static final int GAMEPAD_Y = 4;
@@ -77,7 +100,7 @@ public class Robot extends TimedRobot {
 	public static final int GAMEPAD_BACK = 9;
 	public static final int GAMEPAD_START = 10;
 	public static final int GAMEPAD_LEFT_STICK_PRESS = 11;
-	public static final int GAMEPAD_RIGHT_STICK_PRESS = 12;
+  public static final int GAMEPAD_RIGHT_STICK_PRESS = 12;
 
 	public static final int POV_UP = 0;
 	public static final int POV_UP_RIGHT = 45;
@@ -86,433 +109,367 @@ public class Robot extends TimedRobot {
 	public static final int POV_DOWN = 180;
 	public static final int POV_DOWN_LEFT = 225;
 	public static final int POV_LEFT = 270;
-	public static final int POV_UP_LEFT = 315;
-	public static final double extraSpace = 5.0;
-	public static boolean isGoingCargoShip = false;
+  public static final int POV_UP_LEFT = 315;
 
-	private boolean hasAutoEnded;
-	private boolean isPreviousManual;
-	private boolean stayingAutomatic;
+  public static final String CLOSE_SHOT_RPM_NAME = "Close Shot RPM";
+  public static final String AUTO_DELAY_TIME_NAME = "Auto delay time";
 
-	private Joystick leftJoystick;
-	private Joystick rightJoystick;
-	private Joystick gamepad;
+  
 
-	private DrivetrainSubsystem drivetrainSubsystem;
-	private ClimbingSubsystem climbingSubsystem;
-	private HatchIntakeSubsystem hatchIntakeSubsystem;
-	private ElevatorSubsystem elevatorSubsystem;
-	private CargoIntakeSubsystem cargoIntakeSubsystem;
-	private VisionSubsystem visionSubsystem;
-	private SmartDashboardInfo smartDashboardInfo;
-	private Vector[] autonPath;
-	private Vector targetLocation = new Vector(0, 0);
-	Vector[] path;
+  public static final double topSpeed = 1;
+  File propertyDirectory;
+  String finalThingy;
+  private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
-	private Gyro gyro;
+  /**
+   * This function is run when the robot is first started up and should be
+   * used for any initialization code.
+   */
+  @Override
+  public void robotInit() {
+    gamepad = new Joystick(2);
+    leftJoystick = new Joystick(0);
+    rightJoystick = new Joystick(1);
+    robotInfo = new RobotInfo();
+    intakeSubsystem = new IntakeSubsystem();
+    shooterSubsystem = new ShooterSubsystem();
+    controlPanelSubsystem = new ControlPanelSubsystem();
+    LogServer logServer = new LogServer();
+    logServer.startServer();
+    drivetrainSubsystem = new DrivetrainSubsystem();
+    feederSubsystem = new FeederSubsystem();
+    magazineSubsystem = new MagazineSubsystem();
+    climberSubsystem = new ClimberSubsystem();
+    visionSubsystem = new VisionSubsystem();
 
+    SmartDashboard.putNumber("shooter flywheel manual speed", .5);
+    SmartDashboard.putNumber(CLOSE_SHOT_RPM_NAME, 3000);
+    SmartDashboard.putNumber(AUTO_DELAY_TIME_NAME, 0);
+    
 
+    // Example use of robot logging with SmartDashboard
+    logger.log(Logger.INFO, "This is a smart dashboard test!", 
+      new LogField("ExampleSmartDashboard", 2175, Logger.SMART_DASHBOARD_TAG));
+    propertyDirectory = Filesystem.getDeployDirectory();
+    finalThingy = propertyDirectory.getAbsolutePath();
 
-	private CommandRunner autonomousCommand;
-	private Logger robotLogger;
+    SequentialCommand crossAutoLineCommand = new SequentialCommand(new Command[] {
+      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(36))
+    });
 
+    SequentialCommand crossAutoLineBackwardsCommand = new SequentialCommand(new Command[] {
+      new FollowPathCommand(true, DrivingUtility.makeLinePathSegment(36))
+    });
 
-	// WPI Lib Functions
+    SequentialCommand doNothing = new SequentialCommand();
 
-	/**
-	 * This function is run when the robot is first started up and should be used
-	 * for any initialization code.
-	 */
-	@Override
-	public void robotInit() {
-		hasAutoEnded = false; // TODO: Should we remove this variable since we're not even doing any auto?
+     /*
+    Start on the right side, shoot three balls
+    Intake two balls from trench, and shoot
+    */
+    SequentialCommand rightToTrench = new SequentialCommand(new Command[] {
+      //Change all the "123", make robot in line with the trench
+      //new AimCommand
+      new ShootCommand(4, 4000),
+      new ParallelCommand(new Command[] { 
+        new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(60.0)), //change later
+        new IntakeCommand(5)
+      }),
+      //new TurretCommand
+      //new AimCommand
+      new ShootCommand(12, 4000)
+    });
+    
+    /*
+    Start in middle, shoot three balls
+    Intake three balls from rendezvous, and shoot
+    */
+    SequentialCommand middleRendezvousThreeBall = new SequentialCommand(new Command[] {
+      //Change all the "123", and angle robot towards the three balls
+      //new AimCommand
+      new ShootCommand(4, 4000),
+      new ParallelCommand(new Command[] { 
+        //new DriveStraightCommand(123, .5)
+      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(36)), 
+      new IntakeCommand(4) //3 balls
+      }),
+        //new DriveBackwardCommand(123)
+      new FollowPathCommand(true, DrivingUtility.makeLinePathSegment(36)), 
+      //new AimCommand
+      new ShootCommand(9, 4000)
+    });
+    // cout << "Hi from Yiannis";
+    //drives forward and shoots
+    SequentialCommand closeShotAuto = new SequentialCommand(new Command[] {
+      deadline(5, new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(115))),
+      new RunWhileCommand(new ShootCommand(10, SmartDashboard.getNumber(CLOSE_SHOT_RPM_NAME, 3000)), new AutoFeedCommand())
+    });
 
-		RobotInfo robotInfo = new RobotInfo();
-		smartDashboardInfo = new SmartDashboardInfo();
+    SequentialCommand closeShotAutoTowardsTrench = new SequentialCommand(new Command[] {
+      deadline(4, new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(115))),
+      new RunWhileCommand(new ShootCommand(6, SmartDashboard.getNumber(CLOSE_SHOT_RPM_NAME, 3000)), new AutoFeedCommand()), 
+      deadline(5, new FollowPathCommand(true, DrivingUtility.makeLeftArcPathSegment(24, 90), DrivingUtility.makeLinePathSegment(36))), 
 
-		visionSubsystem = new VisionSubsystem();
-		drivetrainSubsystem = new DrivetrainSubsystem();
-		hatchIntakeSubsystem = new HatchIntakeSubsystem();
-		elevatorSubsystem = new ElevatorSubsystem();
-		cargoIntakeSubsystem = new CargoIntakeSubsystem();
-		climbingSubsystem = new ClimbingSubsystem();
+    });
 
-		robotLogger = new Logger(new LogHandler[] {
-			new StdoutHandler()
-		});
+    SequentialCommand closeShotAutoAwayFromTrench = new SequentialCommand(new Command[] {
+      deadline(4, new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(115))),
+      new RunWhileCommand(new ShootCommand(6, SmartDashboard.getNumber(CLOSE_SHOT_RPM_NAME, 3000)), new AutoFeedCommand()),
+      deadline(5, new FollowPathCommand(true, DrivingUtility.makeLeftArcPathSegment(24, 90), DrivingUtility.makeLinePathSegment(24))),
+    });
 
-		ServiceLocator.register(robotLogger);
+    SequentialCommand farShotAuto = new SequentialCommand(new Command[] {
+      new RunWhileCommand(new ShootCommand(10, 3500), new AutoFeedCommand()),
+      deadline(5, new FollowPathCommand(true, DrivingUtility.makeLinePathSegment(115))),
+    });
 
-		leftJoystick = new Joystick(0);
-		rightJoystick = new Joystick(1);
-		gamepad = new Joystick(2);
+    autoChooser.setDefaultOption("Do Nothing", doNothing);
+    autoChooser.addOption("Cross Auto Line Forwards", crossAutoLineCommand);
+    autoChooser.addOption("Cross Auto Line Backwards", crossAutoLineBackwardsCommand);
+    autoChooser.addOption("Far Shot Auto", farShotAuto);
+    autoChooser.addOption("Close Shot Auto", closeShotAuto);
+    autoChooser.addOption("Right Trench Auto", rightToTrench);
+    autoChooser.addOption("Middle Rendezvous Three Ball", middleRendezvousThreeBall);
+    autoChooser.addOption("Close Shot Auto Towards Trench", closeShotAutoTowardsTrench); 
+    autoChooser.addOption("Close Shot Auto Away From Trench", closeShotAutoAwayFromTrench); 
 
-		Vector[] pathThing = Bezier.getSamplePath();
-		double[] xcoordinates = new double[pathThing.length];
-		double[] ycoordinates = new double[pathThing.length];
-		for(int i = 0; i < pathThing.length; i++) {
-			xcoordinates[i] = pathThing[i].x;
-			ycoordinates[i] = pathThing[i].y;
-		}
-		path = new Vector[30];
+    SmartDashboard.putData(autoChooser);
+  }
 
-		SmartDashboard.putNumberArray("Values/PathXCoords", xcoordinates);
-		SmartDashboard.putNumberArray("Values/PathYCoords", ycoordinates);
-		if(SmartDashboard.putString("CameraToggle/CameraSelected", "1")) {
-			System.out.println("Worked");
-		} else {
-			System.out.println("Didn't Work");
-		}
-		autonPath = Bezier.getSamplePath();
+  public Command deadline(double duration, Command command) {
+    return new ParallelRaceCommand(new TimerCommand(duration), command);
+  }
 
+  /**
+   * This function is called every robot packet, no matter the mode. Use
+   * this for items like diagnostics that you want ran during disabled,
+   * autonomous, teleoperated and test.
+   *
+   * <p>This runs after the mode specific periodic functions, but before
+   * LiveWindow and SmartDashboard integrated updating.
+   */
+  @Override
+  public void robotPeriodic() {
+    SmartDashboard.putNumber("gyro", drivetrainSubsystem.getHeading()); 
+  }
 
+  @Override
+  public void disabledInit() {
+    logger.info("Robot program is disabled and ready.");
+  }
 
+  @Override 
+  public void disabledPeriodic() {
+    super.disabledPeriodic();
+    visionSubsystem.turnLimelightOff();
+  }
 
-		// // Edit this code here to complete the maze!!!!!!!!!!!
-		// SequentialCommand goAngle = new SequentialCommand(new Command[] {
-		// 	new TurningDegreesCommand(-getAngle(125, 16)), //remember put negative if you're going left !!!!!!
-		// 	new DriveStraightBetterCommand(getHype(125, 16), 1), //might be 127 , 16 uhh just try that if it doesn't work
-		// 	new TurningDegreesCommand(getAngle(125, 16)),
-		// 	new DriveStraightBetterCommand(12,1),
-		// 	//new HatchOuttakeCommand(2.0)
-		// });
-		// //System.out.println(-getAngle(5*12, 12)); uhh
+  /**
+   * This autonomous (along with the chooser code above) shows how to select
+   * between different autonomous modes using the dashboard. The sendable
+   * chooser code works with the Java SmartDashboard. If you prefer the
+   * LabVIEW Dashboard, remove all of the chooser code and uncomment the
+   * getString line to get the auto name from the text box below the Gyro
+   *
+   * <p>You can add additional auto modes by adding additional comparisons to
+   * the switch structure below with additional strings. If using the
+   * SendableChooser make sure to add them to the chooser code above as well.
+   */
+  @Override
+  public void autonomousInit() {
+    autonomousCommand = new CommandRunner(
+      new SequentialCommand(
+        new TimerCommand(SmartDashboard.getNumber(AUTO_DELAY_TIME_NAME, 0)),
+        autoChooser.getSelected()
+      )
+    );
+  } //29 + 66 / 2 + 252
 
-		// ParallelCommand keepHatchAndActuate = new ParallelCommand(new Command[] {
-		// 	new SpinInHatchCommand(.5),
-		// 	new ActuatePanelIntakeOutCommand()
-		// });
+  /**
+   * This function is called periodically during autonomous.
+   */
+  @Override
+  public void autonomousPeriodic() {
+    autonomousCommand.runCommand();
+    drivetrainSubsystem.periodic();
+    shooterSubsystem.periodic();
+    climberSubsystem.periodic();
+  }
 
-
-		// SequentialCommand turnAndGo = new SequentialCommand(new Command[] {
-		// 	new TurningLeft(),
-		// 	new DriveStraightBetterCommand(12,1),
-		// 	new TurningRight(),
-		// 	new DriveStraightBetterCommand(4*12, 1)
-		// });
-
-		// ParallelCommand getTheBall = new ParallelCommand(new Command[] {
-		// 	new DriveForwardInchesCommand(12*4.5),
-		// 	new RollerBarOutCommand(3.0)
-		// });
-
-		// SequentialCommand placeCargoPanel = new SequentialCommand(new Command[] {
-		// 	new ActuatePanelIntakeOutCommand(),
-		// 	new DriveForwardInchesCommand(125),
-		// 	new HatchOuttakeCommand(2.0)
-		// });
-		// autonomousCommand = new CommandRunner(goAngle);
-
-		// ParallelCommand noahsTestCommand = new ParallelCommand(new Command[] {
-		// 	new SequentialCommand(new Command[] {
-		// 		new ActuatePanelIntakeOutCommand(),
-		// 		new HatchOuttakeCommand(2.0)
-		// 	}),
-		// 	new RollerBarOutCommand(3.0)
-		// });
-	}
-
-	@Override
-	public void disabledInit() {
-		System.out.println("Robot program is disabled and ready.");
-	}
-
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable chooser
-	 * code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
-	 * remove all of the chooser code and uncomment the getString line to get the
-	 * auto name from the text box below the Gyro
-	 *
-	 * <p>
-	 * You will need to initialize whatever autonomous command is selected inside
-	 * this method.
-	 */
-	@Override
-	public void autonomousInit() {
-		// hasAutoEnded = false;
-		stayingAutomatic = false;
-		drivetrainSubsystem.resetTracking();
-		SmartDashboard.putString("CameraToggle/CameraSelected", "0");
-		drivetrainSubsystem.resetTracking();
-		elevatorSubsystem.zeroEncoder();
-	}
-
-	/**
-	 * This function is called periodically during autonomous. This is where the
-	 * autonomous commands must be executed.
-	 *
-	 * @see #executeCommand(Command)
-	 */
-	@Override
-	public void autonomousPeriodic() {
-		teleopPeriodic();
-	}
-
-	@Override
-	public void disabledPeriodic() {
-	}
-
-	@Override
-	public void teleopInit() {
-		SmartDashboard.putString("CameraToggle/CameraSelected", "0");
-		
-	}
-
-	/**
-	 * This function is called periodically during operator control.
-	 */
-	@Override
-	public void teleopPeriodic() {
-		/**
-		 * Full controls list (update if you can while changing things)
-		 * Left Joystick
-		 * 	- Button 1 (Trigger): front hatch panel outtake
-		 * 	- Button 2 (Center Face Button): floor hatch panel outtake and actuate down
-		 * Right Joystick
-		 * 	- Button 1 (Trigger): outtake cargo
-		 * 	- Button 2 (Center Face Button): simple vision for the cargo goal
-		 * Gamepad
-		 * 	- X Button (while held): hatch panel presets for the elevator (flick left stick up for up one preset,
-		 * 		down for down a preset)
-		 * 	- A Button: actuate cargo intake out
-		 * 	- B Button (while held): cargo presets for the elevator (flick left stick up for up one preset,
-		 * 		down for down a preset)
-		 * 	- Y Button: actuate cargo intake in
-		 * 	- Left Bumper: outtake front hatch panel
-		 * 	- Right Bumber: outtake cargo
-		 * 	- Left Trigger: intake hatch panels front
-		 * 	- Right Trigger: intake cargo with actuation
-		 * 	- Start: toggle hatch panel intake front
-		 * 	- Left Stick: control elevator
-		 * 	- Right Stick: control floor hatch intake
-		 * 	- D-pad Right: spin floor intake in
-		 * 	- D-pad Left: spin floor intake out
-		 */
+  @Override
+  public void teleopInit() {
+    visionSubsystem.turnLimelightOff();
+    teleopAutoShootCommand = new CommandRunner(new AutoFeedCommand());
+    shooterSubsystem.updateTurretPIDConstants();
+  }
 
 
-		SmartDashboard.putNumberArray("Cargo Setpoints", elevatorSubsystem.getCargoSetpoints());
-		SmartDashboard.putNumberArray("Hatch Setpoints", elevatorSubsystem.getHatchSetpoints());
-
-		drivetrainSubsystem.trackLocation();
-		SmartDashboard.putNumber("Values/PositionX", drivetrainSubsystem.fieldPosition.x);
-		SmartDashboard.putNumber("Values/PositionY", drivetrainSubsystem.fieldPosition.y);
-		SmartDashboard.putNumber("Values/LeftSideEncoder", drivetrainSubsystem.getLeftSideDistanceDriven());
-		SmartDashboard.putNumber("Values/RightSideEncoder", drivetrainSubsystem.getRightSideDistanceDriven());
-
-		// Driving
-
-		if(leftJoystick.getRawButtonPressed(3)) {
-			drivetrainSubsystem.storeTargetHeading();
-		}
-		if(leftJoystick.getRawButton(3)) {
-			drivetrainSubsystem.steerTowardVisionTarget(-leftJoystick.getY(), rightJoystick.getX() * 0.25);
-		} else {
-			drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX());
-		}
-
-
-		if(rightJoystick.getRawButtonPressed(3)) {
-			String value = SmartDashboard.getString("CameraToggle/CameraSelected", "0").equals("0") ? "1" : "0";
-			SmartDashboard.putString("CameraToggle/CameraSelected", value);
-		}
-
-		// Front Hatch Intake
-
-		// Intaking
-		if (gamepad.getRawButton(GAMEPAD_LEFT_BUMPER) || leftJoystick.getRawButton(1)) { // left trigger out, left bumper in for hatch intake
-			hatchIntakeSubsystem.spinOutFront();
-		} else if (gamepad.getRawButton(GAMEPAD_LEFT_TRIGGER)) {
-			hatchIntakeSubsystem.spinInFront();
-		} else {
-			hatchIntakeSubsystem.stopSpinning();
-		}
-		// Actuation
-		if(gamepad.getRawButtonPressed(GAMEPAD_START)) {
-			hatchIntakeSubsystem.toggleFrontIntake();
-		}
-
-		// Cargo Intake
-
-		// Intaking/Outtaking
-		if (gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER) || rightJoystick.getRawButton(1)) {
-			if(elevatorSubsystem.getIsElevatorAtBottom() || gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER)) {
-				cargoIntakeSubsystem.rollOut();
-			} else {
-				cargoIntakeSubsystem.rollJustBoxOut();
-			}
-		} else if (gamepad.getRawButton(GAMEPAD_RIGHT_TRIGGER)) {
-			cargoIntakeSubsystem.rollIn();
-		} else {
-			cargoIntakeSubsystem.stopAllMotors();
-		}
-		// Actuation when pressed/released (only when elevator is near bottom as to avoid punching the rocket)
-		if(elevatorSubsystem.getIsElevatorAtBottom()) {
-			if(gamepad.getRawButtonPressed(GAMEPAD_RIGHT_TRIGGER)) {
-				cargoIntakeSubsystem.solenoidOut();
-			}
-			if(gamepad.getRawButtonReleased(GAMEPAD_RIGHT_TRIGGER)) {
-				cargoIntakeSubsystem.solenoidIn();
-			}
-		}
-		// Manual actuation on buttons
-		if (gamepad.getRawButton(GAMEPAD_Y)) {
-			cargoIntakeSubsystem.solenoidIn();
-		}
-		if (gamepad.getRawButton(GAMEPAD_A)) {
-			cargoIntakeSubsystem.solenoidOut();
-		}
-
-		// Elevator
-
-		boolean isManual = !(gamepad.getRawButton(GAMEPAD_X) || gamepad.getRawButton(GAMEPAD_B) || isGoingCargoShip); //if you are pressing X or B then it's not manual
-
-		elevatorSubsystem.setIsManual(isManual);
-		if (!isManual && isPreviousManual) {
-			elevatorSubsystem.setSetpoint(elevatorSubsystem.getElevatorPosition());
-			stayingAutomatic = false;
-		}
-		if ((-gamepad.getRawAxis(1) > TOPLINE && previousJoystick1Value <= TOPLINE) ||
-			(-gamepad.getRawAxis(1) < BOTTOMLINE && previousJoystick1Value >= BOTTOMLINE)) { //if you flicked either way
-			double[] setpoints = gamepad.getRawButton(GAMEPAD_X) ?
-				elevatorSubsystem.getHatchSetpoints() : elevatorSubsystem.getCargoSetpoints();
-			if(!stayingAutomatic) {
-				double preset = elevatorSubsystem.getElevatorPreset(setpoints, -gamepad.getRawAxis(1) > 0);
-				if(preset != -1) {
-					elevatorSubsystem.setSetpoint(preset);
-				}
-				stayingAutomatic = true;
-			} else {
-				elevatorSubsystem.nextElevatorPreset(setpoints, -gamepad.getRawAxis(1) > 0); //lets you switch presets quickly
-			}
-		}
-		double elevatorSpeed = deadband(-gamepad.getRawAxis(1), 0.05) >= 0 ?
-			deadband(-gamepad.getRawAxis(1), 0.05) * 0.6 : deadband(-gamepad.getRawAxis(1), 0.05) * 0.3;
-		if(isManual) {
-			elevatorSubsystem.manualMove(elevatorSpeed);
-		} else {
-			elevatorSubsystem.setElevator();
-		}
-		if(elevatorSpeed > 0.05) {
-			cargoIntakeSubsystem.spinRollerbarForElevator();
-		}
-
-		if(gamepad.getPOV() == POV_UP) { //if u press up
-			isGoingCargoShip = true; //it's going to the cargo ship now!!!!
-			elevatorSubsystem.setIsManual(false); //no longer manual
-			elevatorSubsystem.CargoPlaceElevatorShip(); //set setpoint
-			hatchIntakeSubsystem.setFrontIntakeOut(); //put out swan
-		}
-		if((Math.abs(gamepad.getRawAxis(1))) > 0.05 ) { //if u press the stick
-			if(isGoingCargoShip == true) { //and it was going to the place
-				elevatorSubsystem.setIsManual(true); //make it manual
-				isGoingCargoShip = false;
-			}
-		}
-
-		// Elevator zero
-		if(gamepad.getPOV() == POV_DOWN) {
-			elevatorSubsystem.zeroEncoder();
-		}
-
-		// Climb stuff
-		if(rightJoystick.getRawButton(11)){
-			climbingSubsystem.climbMoveForward();
-		} else if(rightJoystick.getRawButton(10)) {
-			climbingSubsystem.climbMoveBack();
-		} else if(leftJoystick.getRawButton(6)) {
-			climbingSubsystem.climbMoveUp();
-		} else if(leftJoystick.getRawButton(7)) {
-			climbingSubsystem.climbMoveDown();
-		} else {
-			climbingSubsystem.climbStop();
-		}
-
-		// Track some previous values
-		previousJoystick1Value = -gamepad.getRawAxis(1);
-		previousJoystick3Value = -gamepad.getRawAxis(3);
-		isPreviousManual = isManual;
-
-		// Subsystem-specific teleop periodics
-		hatchIntakeSubsystem.teleopPeriodic();
-		elevatorSubsystem.teleopPeriodic();
-		drivetrainSubsystem.teleopPeriodic();
-	}
-
-	// Custom Functions
-
-	// TODO(low): Should we remove this executeCommand function?
-
-	/**
-	 * Runs the execute portion of a command until it is finished. When it is
-	 * finished, it'll call the end portion of the command once.
-	 * <p>
-	 * Note: this method will not call the initialize portion of the command.
-	 *
-	 * @param command the command to execute
-	 */
-	public void executeCommand(Command command) {
-		if (!command.isFinished()) {
-			command.execute();
-		} else {
-			command.end();
-			hasAutoEnded = true;
-		}
-	}
-
-	/**
-	 * Applies a deadband with ramping onto an input value
-	 * @param value input for value
-	 * @param deadband threshold for deadband
-	 * @return value with deadband
-	 */
-	public static double deadband(double value, double deadband) {
-		if (Math.abs(value) > deadband) {
-			if (value > 0.0) {
-				return (value - deadband) / (1.0 - deadband);
-			} else {
-				return (value + deadband) / (1.0 - deadband);
-			}
-		} else {
-			return 0.0;
-		}
-	}
-
-	    /**
-     * 
-     * @param forward the distance moving forward
-     * @param sideways the distance moving sideways
-     * @return returns distance you will need to move at an angle
-     */
-    public double getHype(double forward, double sideways) { 
-        return Math.sqrt((Math.pow(forward - 12, 2.0) + Math.pow(sideways, 2.0)));
+  /**
+   * This function is called periodically during operator control.
+   */
+  /*
+  ✩ controls (weapons) ✩
+    ✩ face buttons ✩
+      -X : unfeed ball from feeder
+      -Y : feed ball into shooter (with feeder)
+      -A : Toggle intake out and in (one double solenoid)
+      -B : Hood toggle (one double solenoid)
+    ✩ Bumpers / triggers ✩ 
+      -Left bumper : none
+      -Left trigger : spin flywheel
+      -Right bumper : intake spin out
+      -Right trigger : intake spin in
+    ✩ Sticks (on gamepad) ✩
+      -left stick Y : Magazine roll out/in
+      -Right stick X : Manual move turret (side to side)
+      -Right stick Y : Manual move turret angle up/down
+    ✩ Climb controls ✩
+      -Start and Back
+    ✩ D - Pad ✩
+      -nothing lol
+  */
+  @Override
+  public void teleopPeriodic() {
+    // ✩ intake roll ✩
+    if(gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER) || leftJoystick.getRawButton(2)) {
+      magazineSubsystem.magazineRollOut();
+      intakeSubsystem.intakeRollOut();
+    } else if (gamepad.getRawButton(GAMEPAD_RIGHT_TRIGGER) || rightJoystick.getRawButton(2)) {
+      intakeSubsystem.intakeRollIn();
+      magazineSubsystem.magazineRollIn();
+    } else {
+      intakeSubsystem.stopIntake();
+      magazineSubsystem.stopMagazine();
     }
 
-    /**
-     * 
-     * @param forward the distance moving forward
-     * @param sideways the distance moving sideways
-     * @return returns angle to turn 
-     */
-    public double getAngle(double forward, double sideways) {
-        return Math.toDegrees(Math.atan(sideways/(forward - 12)));
+    // ✩ intake piston ✩
+    if(gamepad.getRawButtonPressed(GAMEPAD_A)) {
+      intakeSubsystem.toggleIntake();
+    } else if (gamepad.getRawButtonPressed(GAMEPAD_RIGHT_TRIGGER) || gamepad.getRawButtonPressed(GAMEPAD_RIGHT_BUMPER)) {
+      intakeSubsystem.putOut();
+    } else if (gamepad.getRawButtonReleased(GAMEPAD_RIGHT_TRIGGER) || gamepad.getRawButtonReleased(GAMEPAD_RIGHT_BUMPER)) {
+      intakeSubsystem.putIn();
     }
 
 
 
-	// public void driveForward(double distance) {
-	// 	autonomousCommand = new DrivingForward(distance);
-	// }
+    // ✩ auto shooting command ✩
+    if( gamepad.getRawButton(GAMEPAD_X)) {
+      if(gamepad.getRawButtonPressed(GAMEPAD_X)) {
+        teleopAutoShootCommand.resetCommand();
+      }
+      teleopAutoShootCommand.runCommand();
+    } else {
+      teleopAutoShootCommand.endCommand();
 
-	// public void turnRight() {
-	// 	autonomousCommand = new TurningRight();
-	// }
+      // ✩ feeder roll ✩
+      // if(gamepad.getRawButton(GAMEPAD_X)) {
+      //   feederSubsystem.rollOutFeeder();
+      // } else 
+      if (gamepad.getRawButton(GAMEPAD_Y) || gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER)) {
+        feederSubsystem.rollUp();
+      } else {
+        feederSubsystem.stopFeeder();
+      }
+      
+      // ✩ magazine roll ✩ 
+      if(rightJoystick.getRawButton(3)) {
+        magazineSubsystem.magazineRollIn();
+      } else {
+        magazineSubsystem.setMagazineMotor(-MathUtility.deadband(gamepad.getRawAxis(1), .05) * 0.5); 
+      }
 
-	// public void turnLeft() {
-	// 	autonomousCommand = new TurningLeft();
-	// }
+    }
+    
+    // ✩ shooter flywheel ✩
+    if (gamepad.getRawButton(GAMEPAD_LEFT_TRIGGER)) {
+      shooterSubsystem.setTargetSpeed(SmartDashboard.getNumber(CLOSE_SHOT_RPM_NAME, 3000));
+      shooterSubsystem.setMode(Mode.BangBang);
+    } else if (gamepad.getRawButton(GAMEPAD_LEFT_BUMPER)) {
+      shooterSubsystem.setTargetSpeed(SmartDashboard.getNumber("speed goal()rpm??" , 4500));
+      shooterSubsystem.setMode(Mode.BangBang);
+    //} else if (gamepad.getPOV() == POV_DOWN) {
+      //shooterSubsystem.setMode(Mode.Manual);
+      //shooterSubsystem.setManualSpeed(SmartDashboard.getNumber("shooter flywheel manual speed", .5)); 
+    } else {
+      shooterSubsystem.setMode(Mode.Manual);
+      shooterSubsystem.setManualSpeed(0);
+    }
 
-	// public void driveBackward(double distance) {
-	// 	autonomousCommand = new DrivingBackward(distance);
-	// }
+    // ✩ shooter hood ✩
+    if(gamepad.getRawButtonPressed(GAMEPAD_B)) {
+      shooterSubsystem.toggleHoodAngle();
+    }
+    shooterSubsystem.setHoodMotor(MathUtility.deadband(gamepad.getRawAxis(3), .05));
+
+    // ✩ shooter turret + auto aim ✩
+    // if (rightJoystick.getRawButtonPressed(1)) {
+    //   shooterSubsystem.setGoalAngle(visionSubsystem.getLimelightHorizontalOffset());
+    // } else if (rightJoystick.getRawButton(1)) {
+    //   shooterSubsystem.turretPIDToGoalAngle();
+    // } else {
+    //   shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(Math.pow(gamepad.getRawAxis(2), 2), .05)); // squared inputs babey!!!
+    // }
+    
+    shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(MathUtility.squareInputs(gamepad.getRawAxis(2)), .05)); 
+   
+    // ✩ climbing subsystem ✩
+    if (gamepad.getRawButton(GAMEPAD_START)) {
+      climberSubsystem.climbUp();
+    } else if (leftJoystick.getRawButton(6)) { 
+      climberSubsystem.climbDown();
+    } else {
+      climberSubsystem.stopClimbing();
+    }
+
+    //✩ deploying hook ✩
+    if (gamepad.getPOV() == POV_UP) {
+      climberSubsystem.deployUp();
+    } else if (gamepad.getPOV() == POV_DOWN) {
+      climberSubsystem.deployDown();
+    } else {
+      climberSubsystem.stopDeploy();
+    }
+
+    // if(gamepad.getPOV() == POV_UP && gamepad.getPOV() != povLastFrame) {
+    //   teleopClimbDeployCommand.resetCommand();
+    // } else if(gamepad.getPOV() == POV_UP && gamepad.getPOV() == povLastFrame) {
+    //   teleopClimbDeployCommand.runCommand();
+    // } else if(gamepad.getPOV() != POV_UP && povLastFrame == POV_UP) {
+    //   teleopClimbDeployCommand.endCommand();
+    // }
+      
+    // ✩ Drive Controls ✩
+    //drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX() * Math.abs(rightJoystick.getX())); //squared
+    // drivetrainSubsystem.blendedDrive(-leftJoystick.getY() , rightJoystick.getX()); //normal
+    //drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), (rightJoystick.getX() * Math.abs( rightJoystick.getX() ) )*.5); //squared * .5
+    //drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX() * .5); //linear * .5
+    if(drivetrainSubsystem.gearsSolenoid.get()) {
+      drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX()*.5, !rightJoystick.getRawButton(JOYSTICK_TRIGGER)); //ok actual linear but turning * .5 (press button to get out of smoothing!)
+    } else {
+      drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX(), !rightJoystick.getRawButton(JOYSTICK_TRIGGER)); //ok actual linear
+    }
+    
+    
+
+    // ✩ changing gears ✩
+    drivetrainSubsystem.setGear(leftJoystick.getRawButton(JOYSTICK_TRIGGER)); //press and hold code
+    
+    //✩✩✩ you have reached the end of teleop periodic !!!!!!!!!! : ) ✩✩✩
+    drivetrainSubsystem.periodic();
+    shooterSubsystem.periodic();
+    climberSubsystem.periodic();
+  }
+
+  /**
+   * This function is called periodically during test mode.
+   */
+  @Override
+  public void testPeriodic() {
+    drivetrainSubsystem.resetTracking();
+    visionSubsystem.turnLimelightOn();
+    //drivetrainSubsystem.orchestra.loadMusic("careless-whisper.chrp");
+    //drivetrainSubsystem.orchestra.play();
+  }
 }
+

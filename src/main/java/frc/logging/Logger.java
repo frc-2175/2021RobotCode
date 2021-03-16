@@ -2,7 +2,8 @@ package frc.logging;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
+
+import frc.ServiceLocator;
 
 public class Logger {
     public ArrayList<LogField> baseFields;
@@ -11,6 +12,24 @@ public class Logger {
     public static final int INFO = 1;
     public static final int WARNING = 2;
     public static final int ERROR = 3;
+    public static final String SMART_DASHBOARD_TAG = "SmartDashboard";
+
+    /**
+     * Constructs a new logger object.
+     * @param handlers An array of LogHandlers meant to take each call of the log methods
+     * and handle the level, fields, and tags associated with the call.
+     * @param isBaseLogger whether or not this logger should be registered with the service
+     * locator
+     * @param baseFields a variable number of LogFields that will be appended to the fields
+     * input into the log methods.
+     */
+    public Logger(LogHandler[] handlers, boolean isBaseLogger, LogField... baseFields) {
+        if(isBaseLogger) {
+            ServiceLocator.register(this);
+        }
+        this.handlers = handlers;
+        this.baseFields = new ArrayList<>(Arrays.asList(baseFields));
+    }
 
     /**
      * Constructs a new logger object.
@@ -20,9 +39,9 @@ public class Logger {
      * input into the log methods.
      */
     public Logger(LogHandler[] handlers, LogField... baseFields) {
-        this.handlers = handlers;
-        this.baseFields = new ArrayList<>(Arrays.asList(baseFields));
+        this(handlers, false, baseFields);
     }
+
 
     /**
      * Sends a log message and a group of fields (including the base fields)
@@ -89,8 +108,6 @@ public class Logger {
             newBaseFields.add(i, baseFields.get(i));
         }
 
-
-
         return new Logger(handlers, newBaseFields.toArray(new LogField[0]));
     }
 
@@ -110,18 +127,5 @@ public class Logger {
             default:
                 return "?";
         }
-    }
-
-    public static void main(String args[]) {
-        // Example with base fields
-        Logger logger = new Logger(new LogHandler[] {
-            new StdoutHandler()
-        }, new LogField("Robot", "Competition"), new LogField("Team", 2175));
-
-        // Example without base fields
-        // Logger logger = new Logger(new LogHandler[] {
-        //     new StdoutHandler()
-        // });
-        logger.info("Test log", new LogField("GryoAngle", 22.2), new LogField("LeftEncoder", 400));
     }
 }

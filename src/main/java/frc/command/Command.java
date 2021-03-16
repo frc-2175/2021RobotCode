@@ -1,9 +1,11 @@
 package frc.command;
 
+import edu.wpi.first.wpilibj.Timer;
 import frc.spacetime.SpacetimeEvent;
 
 public abstract class Command {
 	protected SpacetimeEvent event;
+	private double startTime;
 
     /**
      * Runs on the start of the command.
@@ -29,7 +31,7 @@ public abstract class Command {
 		if(event != null) {
 			event.start();
 		}
-
+		startTime = Timer.getFPGATimestamp();
 		init();
 	}
 
@@ -51,5 +53,9 @@ public abstract class Command {
 
 	public void initSpacetimeEvent(SpacetimeEvent parentEvent) {
 		event = parentEvent.makeChild(this.getClass().getName());
+	}
+
+	protected double getElapsedTime() {
+		return Timer.getFPGATimestamp() - startTime;
 	}
 }
