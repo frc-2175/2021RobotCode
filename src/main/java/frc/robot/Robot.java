@@ -376,7 +376,7 @@ public class Robot extends TimedRobot {
       if(rightJoystick.getRawButton(3)) {
         magazineSubsystem.magazineRollIn();
       } else {
-        magazineSubsystem.setMagazineMotor(-MathUtility.deadband(gamepad.getRawAxis(1), .05) * 0.5); 
+        magazineSubsystem.setMagazineMotor(MathUtility.deadband(gamepad.getRawAxis(1), .05) * 0.5); 
       }
 
     }
