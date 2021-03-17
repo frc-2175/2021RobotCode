@@ -315,7 +315,7 @@ public class Robot extends TimedRobot {
       -A : Toggle intake out and in (one double solenoid)
       -B : Hood toggle (one double solenoid)
     ✩ Bumpers / triggers ✩ 
-      -Left bumper : none
+      -Left bumper : sets shooter mode to "BangBang" with 0 comments. Good luck.
       -Left trigger : spin flywheel
       -Right bumper : intake spin out
       -Right trigger : intake spin in
