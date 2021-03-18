@@ -332,6 +332,12 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     // ✩ intake roll ✩
    
+    //when you press B , rollerbar spins in
+    //if you press b
+    //spin rollerbar
+    if (gamepad.getRawButton(GAMEPAD_B)) {
+        intakeSubsystem.intakeRollIn(); 
+    }
 
     // ✩ intake piston ✩
 
