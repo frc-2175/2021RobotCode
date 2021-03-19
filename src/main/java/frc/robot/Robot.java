@@ -223,6 +223,10 @@ public class Robot extends TimedRobot {
       deadline(5, new FollowPathCommand(true, DrivingUtility.makeLinePathSegment(115))),
     });
 
+    SequentialCommand testAuto = new SequentialCommand(new Command[] {
+      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(24), DrivingUtility.makeLeftArcPathSegment(24, 90), DrivingUtility.makeLinePathSegment(24),DrivingUtility.makeRightArcPathSegment(24, 90), DrivingUtility.makeLinePathSegment(48))
+    });
+
     autoChooser.setDefaultOption("Do Nothing", doNothing);
     autoChooser.addOption("Cross Auto Line Forwards", crossAutoLineCommand);
     autoChooser.addOption("Cross Auto Line Backwards", crossAutoLineBackwardsCommand);
@@ -232,6 +236,7 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("Middle Rendezvous Three Ball", middleRendezvousThreeBall);
     autoChooser.addOption("Close Shot Auto Towards Trench", closeShotAutoTowardsTrench); 
     autoChooser.addOption("Close Shot Auto Away From Trench", closeShotAutoAwayFromTrench); 
+    autoChooser.addOption("testTelemetry", testAuto);
 
     SmartDashboard.putData(autoChooser);
   }

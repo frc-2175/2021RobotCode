@@ -25,9 +25,9 @@ public class ControlPanelColorCommand extends Command {
     }
 
     public void execute() {
-        currentColor = ControlPanelSubsystem
-            .getControlPanelColor(ControlPanelSubsystem.getHue(controlPanelSubsystem.getColorSensorRed(),
-            controlPanelSubsystem.getColorSensorGreen(), controlPanelSubsystem.getColorSensorBlue()));
+        // currentColor = ControlPanelSubsystem
+        //     .getControlPanelColor(ControlPanelSubsystem.getHue(controlPanelSubsystem.getColorSensorRed(),
+        //     controlPanelSubsystem.getColorSensorGreen(), controlPanelSubsystem.getColorSensorBlue()));
         double shortestDistance = getShortestDistance(currentColor, goalColor);
         if (shortestDistance > 0) {
             controlPanelSubsystem.spinControlPanelForward();

@@ -2,7 +2,7 @@ package frc.subsystem;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.revrobotics.ColorSensorV3;
+// import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.I2C;
 import frc.ServiceLocator;
@@ -11,7 +11,7 @@ import frc.math.MathUtility;
 public class ControlPanelSubsystem {
 
     public final WPI_TalonSRX controlPanelMotor;
-    private final ColorSensorV3 colorSensor; 
+    // private final ColorSensorV3 colorSensor; 
     public static double redHue = 0;
     public static double yellowHue = 60;
     public static double greenHue = 120;
@@ -21,7 +21,7 @@ public class ControlPanelSubsystem {
     public ControlPanelSubsystem() {
         ServiceLocator.register(this);
         controlPanelMotor = new WPI_TalonSRX(10);
-        colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
+        // colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
         controlPanelMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
     }
 
@@ -37,25 +37,25 @@ public class ControlPanelSubsystem {
         controlPanelMotor.set(0);
     }
 
-    public double getColorSensorRed() {
-        return colorSensor.getColor().red;
-    } 
+    // public double getColorSensorRed() {
+    //     return colorSensor.getColor().red;
+    // } 
 
-    public double getColorSensorBlue() {
-        return colorSensor.getColor().blue;
-    }
+    // public double getColorSensorBlue() {
+    //     return colorSensor.getColor().blue;
+    // }
 
-    public double getColorSensorGreen() {
-        return colorSensor.getColor().green;
-    }
+    // public double getColorSensorGreen() {
+    //     return colorSensor.getColor().green;
+    // }
 
-    public double getColorSensorIR() {
-        return colorSensor.getIR();
-    }
+    // public double getColorSensorIR() {
+    //     return colorSensor.getIR();
+    // }
 
-    public double getColorSensorProximity() {
-        return colorSensor.getProximity();
-    }
+    // public double getColorSensorProximity() {
+    //     return colorSensor.getProximity();
+    // }
 
     public static String getControlPanelColor(double hue) {
       double redDistance = Math.abs(MathUtility.getDistanceBetweenAngles(hue, redHue));
