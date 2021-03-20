@@ -190,7 +190,8 @@ public class DrivetrainSubsystem {
 	 * @param zRotation the curvature to drive/the in-place rotation
 	 * @see #getBlendedMotorValues(double, double)
 	 */
-	public void blendedDrive(double desiredSpeed, double rotation, double inputThreshold, boolean speedSmoothing) {
+	public void 
+	blendedDrive(double desiredSpeed, double rotation, double inputThreshold, boolean speedSmoothing) {
 		if (speedSmoothing) {
 			double MAX_SPEED_TIME = .5; //change this to change reaction itme!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			double MAX_CHANGE_PER_TICK = 1.0 / ( MAX_SPEED_TIME * 50.0);
@@ -346,7 +347,7 @@ public class DrivetrainSubsystem {
 			angle = getAngleToPoint(goalPoint);
 		}
 		double turnValue = purePursuitPID.pid(-angle, 0);
-		double speed = DrivingUtility.getTrapezoidSpeed(0.3, 0.75, 0.2, pathResult.path.length, 6, 10, indexOfClosestPoint);
+		double speed = DrivingUtility.getTrapezoidSpeed(0.3, 0.75, 0.2, pathResult.numberOfActualPoints, 6, 20, indexOfClosestPoint);
 
 		if(isBackwards) {
 			blendedDrive(-speed, -turnValue, false);

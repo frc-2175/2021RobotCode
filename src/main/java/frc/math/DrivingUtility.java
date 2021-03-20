@@ -31,7 +31,12 @@ public class DrivingUtility {
         } else if (currentDistance < totalDistance - rampDownDistance) {
             return middleSpeed; 
         } else if (currentDistance < totalDistance) {
-            return MathUtility.lerp(middleSpeed, endSpeed, (currentDistance - (totalDistance - rampDownDistance)) / rampDownDistance);
+            double rampDownStartDistance = (totalDistance - rampDownDistance);
+            return MathUtility.lerp(
+                middleSpeed,
+                endSpeed,
+                (currentDistance - rampDownStartDistance) / rampDownDistance
+            );
         } else {
             return endSpeed; 
         }
