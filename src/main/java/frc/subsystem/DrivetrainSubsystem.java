@@ -127,7 +127,7 @@ public class DrivetrainSubsystem {
 		leftMaster.setSelectedSensorPosition(0, 0, 0);
 		rightMaster.setSelectedSensorPosition(0, 0, 0);
 
-		purePursuitPID = new PIDController(0.015, 0, 0);
+		purePursuitPID = new PIDController(0.02, 0, 0.002);
 
 		// orchestra = new Orchestra();
 		// orchestra.addInstrument(rightMaster);

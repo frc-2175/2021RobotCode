@@ -154,7 +154,7 @@ public class Robot extends TimedRobot {
     finalThingy = propertyDirectory.getAbsolutePath();
 
     SequentialCommand crossAutoLineCommand = new SequentialCommand(new Command[] {
-      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(36))
+      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(170))
     });
 
     SequentialCommand crossAutoLineBackwardsCommand = new SequentialCommand(new Command[] {

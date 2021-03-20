@@ -12,9 +12,9 @@ public class PIDController {
      * @param d derivative gain
      */
     public PIDController(double p, double i, double d) {
-        this.kp = p;
-        this.ki = i;
-        this.kd = d;
+        kp = p;
+        ki = i;
+        kd = d;
         integral = 0;
 		previousError = Double.NaN;
 		dt = 0;
