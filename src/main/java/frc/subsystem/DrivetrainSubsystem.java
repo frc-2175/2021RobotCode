@@ -352,7 +352,7 @@ public class DrivetrainSubsystem {
 			angle = getAngleToPoint(goalPoint);
 		}
 		double turnValue = purePursuitPID.pid(-angle, 0);
-		double speed = DrivingUtility.getTrapezoidSpeed(0.3, 0.75, 0.3, pathResult.numberOfActualPoints, 6, 20, indexOfClosestPoint);
+		double speed = DrivingUtility.getTrapezoidSpeed(0.3, 0.95, 0.3, pathResult.numberOfActualPoints, 6, 20, indexOfClosestPoint);
 
 		if(isBackwards) {
 			blendedDrive(-speed, -turnValue, false);
