@@ -21,6 +21,7 @@ public class FollowPathCommand extends Command {
     }
 
     public void init() {
+        drivetrainSubsystem.resetPurePursuit();
         purePursuitResult = null; 
         pathResult = DrivingUtility.makePath(isBackwards, -drivetrainSubsystem.getHeading(), drivetrainSubsystem.getRobotPosition(), pathSegments);
         double[] xCoords = new double[pathResult.path.length];

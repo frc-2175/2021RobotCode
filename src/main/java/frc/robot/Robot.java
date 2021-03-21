@@ -227,6 +227,16 @@ public class Robot extends TimedRobot {
       new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(24), DrivingUtility.makeLeftArcPathSegment(24, 90), DrivingUtility.makeLinePathSegment(24),DrivingUtility.makeRightArcPathSegment(24, 90), DrivingUtility.makeLinePathSegment(48))
     });
 
+    SequentialCommand slalomPathChalenge = new SequentialCommand(new Command[] {
+      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(30), DrivingUtility.makeLeftArcPathSegment(30, 90),
+        DrivingUtility.makeRightArcPathSegment(30, 90), DrivingUtility.makeLinePathSegment(120), 
+        DrivingUtility.makeRightArcPathSegment(30, 90), DrivingUtility.makeLeftArcPathSegment(30, 90), 
+        DrivingUtility.makeLeftArcPathSegment(30, 90), DrivingUtility.makeLeftArcPathSegment(30, 90), DrivingUtility.makeLeftArcPathSegment(30, 90),
+        DrivingUtility.makeRightArcPathSegment(30, 90), DrivingUtility.makeLinePathSegment(120), 
+        DrivingUtility.makeRightArcPathSegment(30, 90), DrivingUtility.makeLinePathSegment(12), DrivingUtility.makeLeftArcPathSegment(30, 90), 
+        DrivingUtility.makeLinePathSegment(30))
+    });
+
     autoChooser.setDefaultOption("Do Nothing", doNothing);
     autoChooser.addOption("Cross Auto Line Forwards", crossAutoLineCommand);
     autoChooser.addOption("Cross Auto Line Backwards", crossAutoLineBackwardsCommand);
@@ -237,6 +247,7 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("Close Shot Auto Towards Trench", closeShotAutoTowardsTrench); 
     autoChooser.addOption("Close Shot Auto Away From Trench", closeShotAutoAwayFromTrench); 
     autoChooser.addOption("testTelemetry", testAuto);
+    autoChooser.addOption("slalomPathChalenge", slalomPathChalenge);
 
     SmartDashboard.putData(autoChooser);
   }

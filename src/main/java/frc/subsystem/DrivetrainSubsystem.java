@@ -52,6 +52,7 @@ public class DrivetrainSubsystem {
 	public static final double TICKS_TO_INCHES = 112.0/182931.0;
 	private Vector position = new Vector(0, 0); 
 	private PIDController purePursuitPID;
+	private int previousClosestPoint;
 
 	private SpeedControllerGroup leftMotors;
 	private SpeedControllerGroup rightMotors;
@@ -133,6 +134,10 @@ public class DrivetrainSubsystem {
 		// orchestra.addInstrument(rightMaster);
 		// orchestra.addInstrument(leftMaster);
 
+	}
+
+	public void resetPurePursuit(){
+		previousClosestPoint = 0;
 	}
 	
 	public void periodic() {
@@ -337,8 +342,8 @@ public class DrivetrainSubsystem {
 	}
 
 	public PurePursuitResult purePursuit(Path pathResult, boolean isBackwards) {
-		int indexOfClosestPoint = findClosestPoint(pathResult, position);
-		int indexOfGoalPoint = findGoalPoint(pathResult, position, 25);
+		int indexOfClosestPoint = findClosestPoint(pathResult, position, previousClosestPoint);
+		int indexOfGoalPoint = findGoalPoint(pathResult, position, 25, indexOfClosestPoint);
 		Vector goalPoint = pathResult.path[indexOfGoalPoint].subtract(position).rotate(navx.getAngle());
 		double angle;
 		if(isBackwards) {
@@ -347,13 +352,17 @@ public class DrivetrainSubsystem {
 			angle = getAngleToPoint(goalPoint);
 		}
 		double turnValue = purePursuitPID.pid(-angle, 0);
-		double speed = DrivingUtility.getTrapezoidSpeed(0.3, 0.75, 0.2, pathResult.numberOfActualPoints, 6, 20, indexOfClosestPoint);
+		double speed = DrivingUtility.getTrapezoidSpeed(0.3, 0.75, 0.3, pathResult.numberOfActualPoints, 6, 20, indexOfClosestPoint);
 
 		if(isBackwards) {
 			blendedDrive(-speed, -turnValue, false);
 		} else {
 			blendedDrive(speed, turnValue, false);
 		}
+
+		previousClosestPoint = indexOfClosestPoint;
+
+		
 		
 
 		logger.info("pure pursiuit intfo",
@@ -369,10 +378,18 @@ public class DrivetrainSubsystem {
 		return new PurePursuitResult(indexOfClosestPoint, indexOfGoalPoint, goalPoint);
 	}
 
-	public static int findClosestPoint(Path pathResult, Vector fieldPosition) {
+	public static int findClosestPoint(Path pathResult, Vector fieldPosition, int previousClosestPoint) {
 		int indexOfClosestPoint = 0;
+		int startIndex = previousClosestPoint - 36;
+		int endIndex = previousClosestPoint + 36;
+		if (startIndex < 0){
+			startIndex = 0;
+		}
+		if (endIndex > pathResult.numberOfActualPoints - 1){
+			endIndex = pathResult.numberOfActualPoints -1;
+		}	
 		double minDistance = pathResult.path[0].subtract(fieldPosition).magnitude(); 
-		for(int i = 0; i < pathResult.numberOfActualPoints; i++) {
+		for(int i = startIndex; i <= endIndex; i++) {
 			double distanceToPoint = pathResult.path[i].subtract(fieldPosition).magnitude();
 			if (distanceToPoint <= minDistance) {
 				indexOfClosestPoint = i; 
@@ -382,9 +399,8 @@ public class DrivetrainSubsystem {
 		return indexOfClosestPoint;
 	}
 
-	public static int findGoalPoint(Path pathResult, Vector fieldPosition, int lookAhead) {
-		int indexOfClosestPoint = findClosestPoint(pathResult, fieldPosition); 
-		return Math.min(indexOfClosestPoint + lookAhead, pathResult.path.length - 1);
+	public static int findGoalPoint(Path pathResult, Vector fieldPosition, int lookAhead, int closestPoint) {
+		return Math.min(closestPoint + lookAhead, pathResult.path.length - 1);
 	}
 
 	public static double getAngleToPoint(Vector point) {
