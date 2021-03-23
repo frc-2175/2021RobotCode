@@ -463,7 +463,7 @@ public class Robot extends TimedRobot {
     if(drivetrainSubsystem.gearsSolenoid.get()) {
       drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX()*.5, !rightJoystick.getRawButton(JOYSTICK_TRIGGER)); //ok actual linear but turning * .5 (press button to get out of smoothing!)
     } else {
-      drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX(), !rightJoystick.getRawButton(JOYSTICK_TRIGGER)); //ok actual linear
+      drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX()*rightJoystick.getThrottle(), !rightJoystick.getRawButton(JOYSTICK_TRIGGER)); //ok actual linear
     }
     
     
