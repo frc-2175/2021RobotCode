@@ -224,7 +224,8 @@ public class Robot extends TimedRobot {
     });
 
     SequentialCommand testAuto = new SequentialCommand(new Command[] {
-      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(24), DrivingUtility.makeLeftArcPathSegment(24, 90), DrivingUtility.makeLinePathSegment(24),DrivingUtility.makeRightArcPathSegment(24, 90), DrivingUtility.makeLinePathSegment(48))
+      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(24), DrivingUtility.makeLeftArcPathSegment(24, 90), DrivingUtility.makeLinePathSegment(24), 
+      DrivingUtility.makeRightArcPathSegment(24, 90), DrivingUtility.makeLinePathSegment(48))
     });
 
     SequentialCommand slalomPathChalenge = new SequentialCommand(new Command[] {
@@ -236,6 +237,14 @@ public class Robot extends TimedRobot {
         DrivingUtility.makeRightArcPathSegment(30, 90), DrivingUtility.makeLinePathSegment(12), DrivingUtility.makeLeftArcPathSegment(30, 90), 
         DrivingUtility.makeLinePathSegment(30))
     });
+    
+    SequentialCommand barrelRacingPathChalenge = new SequentialCommand(new Command[] {
+      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(112), DrivingUtility.makeRightArcPathSegment(30, 360), DrivingUtility.makeLinePathSegment(86), 
+      DrivingUtility.makeLeftArcPathSegment(30, 319), DrivingUtility.makeLinePathSegment(84), DrivingUtility.makeLeftArcPathSegment(30, 220), DrivingUtility.makeLinePathSegment(270))
+    });
+
+    SequentialCommand bouncePath = new SequentialCommand(new Command[] {new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(18), DrivingUtility.makeLeftArcPathSegment(30, 90), DrivingUtility.makeLinePathSegment(12), 
+      DrivingUtility.makeLeftArcPathSegment(1, 20)), new FollowPathCommand(true, DrivingUtility.makeLinePathSegment(130), DrivingUtility.makeLeftArcPathSegment(30, 157), DrivingUtility.makeLinePathSegment(90))});
 
     autoChooser.setDefaultOption("Do Nothing", doNothing);
     autoChooser.addOption("Cross Auto Line Forwards", crossAutoLineCommand);
@@ -248,6 +257,9 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("Close Shot Auto Away From Trench", closeShotAutoAwayFromTrench); 
     autoChooser.addOption("testTelemetry", testAuto);
     autoChooser.addOption("slalomPathChalenge", slalomPathChalenge);
+    autoChooser.addOption("barrelRacingPathChallenge", barrelRacingPathChalenge);
+    autoChooser.addOption("bouncePath", bouncePath);
+
 
     SmartDashboard.putData(autoChooser);
   }
@@ -463,7 +475,7 @@ public class Robot extends TimedRobot {
     if(drivetrainSubsystem.gearsSolenoid.get()) {
       drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX()*.5, !rightJoystick.getRawButton(JOYSTICK_TRIGGER)); //ok actual linear but turning * .5 (press button to get out of smoothing!)
     } else {
-      drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX(), !rightJoystick.getRawButton(JOYSTICK_TRIGGER)); //ok actual linear
+      drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX()*rightJoystick.getRawAxis(2), !rightJoystick.getRawButton(JOYSTICK_TRIGGER)); //ok actual linear
     }
     
     
