@@ -43,11 +43,11 @@ public class FollowPathCommand extends Command {
             return false; 
         }
         if(isBackwards) {
-            return purePursuitResult.indexOfClosestPoint == pathResult.numberOfActualPoints - 1 //closest point is last point
-            && purePursuitResult.goalPoint.y >= 0; //goal point us behind us
+            return purePursuitResult.indexOfClosestPoint == pathResult.numberOfActualPoints - 1; //closest point is last point
+            // && purePursuitResult.goalPoint.y >= 0; //goal point us behind us
         } else {
-            return purePursuitResult.indexOfClosestPoint == pathResult.numberOfActualPoints - 1
-            && purePursuitResult.goalPoint.y <= 0;
+            return purePursuitResult.indexOfClosestPoint == pathResult.numberOfActualPoints - 1;
+            //&& purePursuitResult.goalPoint.y <= 0;
         }
     }
 

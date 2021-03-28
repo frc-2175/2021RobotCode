@@ -243,8 +243,12 @@ public class Robot extends TimedRobot {
       DrivingUtility.makeLeftArcPathSegment(30, 319), DrivingUtility.makeLinePathSegment(84), DrivingUtility.makeLeftArcPathSegment(30, 220), DrivingUtility.makeLinePathSegment(270))
     });
 
-    SequentialCommand bouncePath = new SequentialCommand(new Command[] {new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(18), DrivingUtility.makeLeftArcPathSegment(30, 90), DrivingUtility.makeLinePathSegment(12), 
-      DrivingUtility.makeLeftArcPathSegment(1, 20)), new FollowPathCommand(true, DrivingUtility.makeLinePathSegment(130), DrivingUtility.makeLeftArcPathSegment(30, 157), DrivingUtility.makeLinePathSegment(90))});
+    SequentialCommand bouncePath = new SequentialCommand(new Command[] {
+      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(18), DrivingUtility.makeLeftArcPathSegment(30, 90), DrivingUtility.makeLinePathSegment(12)),
+      new FollowPathCommand(true, DrivingUtility.makeLeftArcPathSegment(1, 25), DrivingUtility.makeLinePathSegment(96), DrivingUtility.makeLeftArcPathSegment(30, 157), DrivingUtility.makeLinePathSegment(78)),
+      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(78), DrivingUtility.makeLeftArcPathSegment(30, 90), DrivingUtility.makeLinePathSegment(36), DrivingUtility.makeLeftArcPathSegment(30, 90), DrivingUtility.makeLinePathSegment(72)),
+      new FollowPathCommand(true, DrivingUtility.makeLeftArcPathSegment(42, 90))
+    });
 
     autoChooser.setDefaultOption("Do Nothing", doNothing);
     autoChooser.addOption("Cross Auto Line Forwards", crossAutoLineCommand);
@@ -358,6 +362,11 @@ public class Robot extends TimedRobot {
   */
   @Override
   public void teleopPeriodic() {
+
+    logger.info("throttle value",
+			new LogField("axis 2(throttle)", (-0.25*rightJoystick.getRawAxis(2)+0.75), Logger.SMART_DASHBOARD_TAG)
+		);
+
     // ✩ intake roll ✩
     if(gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER) || leftJoystick.getRawButton(2)) {
       magazineSubsystem.magazineRollOut();
@@ -475,7 +484,7 @@ public class Robot extends TimedRobot {
     if(drivetrainSubsystem.gearsSolenoid.get()) {
       drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX()*.5, !rightJoystick.getRawButton(JOYSTICK_TRIGGER)); //ok actual linear but turning * .5 (press button to get out of smoothing!)
     } else {
-      drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX()*rightJoystick.getThrottle(), !rightJoystick.getRawButton(JOYSTICK_TRIGGER)); //ok actual linear
+      drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX()*(-0.25*rightJoystick.getRawAxis(2)+0.75), !rightJoystick.getRawButton(JOYSTICK_TRIGGER)); //ok actual linear
     }
     
     
