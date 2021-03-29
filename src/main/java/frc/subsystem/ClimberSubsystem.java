@@ -21,7 +21,7 @@ public class ClimberSubsystem {
     public ClimberSubsystem() {
         ServiceLocator.register(this);
         robotInfo = ServiceLocator.get(RobotInfo.class);
-        deployMotor = new WPI_TalonSRX(6);
+        deployMotor = new WPI_TalonSRX(20);
         deployMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
         winchMotor = new WPI_VictorSPX(5);
         deployMotor.setNeutralMode(NeutralMode.Brake);

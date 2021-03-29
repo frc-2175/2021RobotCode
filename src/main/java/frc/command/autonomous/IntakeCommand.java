@@ -22,7 +22,8 @@ public class IntakeCommand extends Command {
 
     public void execute() {
         currentTime = Timer.getFPGATimestamp();
-        intakeSubsystem.intakeRollOut();
+        intakeSubsystem.intakeRollIn();
+        intakeSubsystem.putOut();
     }
 
     public boolean isFinished() {
@@ -31,5 +32,6 @@ public class IntakeCommand extends Command {
 
     public void end() {
         intakeSubsystem.stopIntake();
+        intakeSubsystem.putIn();
     }
 }

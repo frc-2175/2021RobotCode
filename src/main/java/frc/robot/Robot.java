@@ -12,6 +12,7 @@ import java.io.File;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -26,6 +27,7 @@ import frc.command.RunWhileCommand;
 import frc.command.SequentialCommand;
 import frc.command.autonomous.FollowPathCommand;
 import frc.command.autonomous.IntakeCommand;
+import frc.command.autonomous.MagazineInCommand;
 import frc.command.autonomous.ShootCommand;
 import frc.command.autonomous.TimerCommand;
 import frc.info.RobotInfo;
@@ -250,6 +252,15 @@ public class Robot extends TimedRobot {
       new FollowPathCommand(true, DrivingUtility.makeLeftArcPathSegment(42, 90))
     });
 
+    Command redA = new RunWhileCommand(
+      new FollowPathCommand(false,
+        DrivingUtility.makeLinePathSegment(24), DrivingUtility.makeRightArcPathSegment(60, 19), DrivingUtility.makeLinePathSegment(62), DrivingUtility.makeLeftArcPathSegment(1, 109),
+        DrivingUtility.makeLinePathSegment(90), DrivingUtility.makeRightArcPathSegment(5, 84.8), DrivingUtility.makeLinePathSegment(170)
+      ),
+      new ParallelCommand(new IntakeCommand(999), new MagazineInCommand())
+    );
+
+
     autoChooser.setDefaultOption("Do Nothing", doNothing);
     autoChooser.addOption("Cross Auto Line Forwards", crossAutoLineCommand);
     autoChooser.addOption("Cross Auto Line Backwards", crossAutoLineBackwardsCommand);
@@ -263,8 +274,10 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("slalomPathChalenge", slalomPathChalenge);
     autoChooser.addOption("barrelRacingPathChallenge", barrelRacingPathChalenge);
     autoChooser.addOption("bouncePath", bouncePath);
+    autoChooser.addOption("redA", redA);
 
 
+    CameraServer.getInstance().startAutomaticCapture();
     SmartDashboard.putData(autoChooser);
   }
 
@@ -362,11 +375,6 @@ public class Robot extends TimedRobot {
   */
   @Override
   public void teleopPeriodic() {
-
-    logger.info("throttle value",
-			new LogField("axis 2(throttle)", (-0.25*rightJoystick.getRawAxis(2)+0.75), Logger.SMART_DASHBOARD_TAG)
-		);
-
     // ✩ intake roll ✩
     if(gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER) || leftJoystick.getRawButton(2)) {
       magazineSubsystem.magazineRollOut();

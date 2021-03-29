@@ -10,23 +10,28 @@ import frc.ServiceLocator;
 
 public class MagazineSubsystem {
 
-    private final SpeedController magazineMotor;
+    private final WPI_TalonSRX magazineMotor;
+    private final WPI_TalonSRX otherMagazineMotor;
 
     public MagazineSubsystem() {
         magazineMotor = new WPI_TalonSRX(7);
+        otherMagazineMotor = new WPI_TalonSRX(6);
+        otherMagazineMotor.setInverted(true);
+        magazineMotor.setInverted(true);
         ServiceLocator.register(this);
-        
     }
 
     /**
      * rolls intake in at full in
      */
     public void magazineRollIn() {
-        magazineMotor.set(0.87);   
+        magazineMotor.set(0.87);
+        otherMagazineMotor.set(0.87);  
     }
     
     public void stopMagazine() {
         magazineMotor.set(0);
+        otherMagazineMotor.set(0);
     }
 
     /**
@@ -35,6 +40,7 @@ public class MagazineSubsystem {
      */
     public void setMagazineMotor(double speed) {
         magazineMotor.set(speed);
+        otherMagazineMotor.set(speed);
     }
 
     /**
@@ -42,6 +48,7 @@ public class MagazineSubsystem {
      */
     public void magazineRollOut() {
         magazineMotor.set(-1);
+        otherMagazineMotor.set(-1);
     }
 
     
