@@ -260,6 +260,30 @@ public class Robot extends TimedRobot {
       new ParallelCommand(new IntakeCommand(999), new MagazineInCommand())
     );
 
+    Command redB = new RunWhileCommand(
+      new FollowPathCommand(false,
+       DrivingUtility.makeLeftArcPathSegment(30, 12), DrivingUtility.makeLinePathSegment(60), DrivingUtility.makeRightArcPathSegment(30, 74), DrivingUtility.makeLinePathSegment(70),
+       DrivingUtility.makeLeftArcPathSegment(20, 92), DrivingUtility.makeLinePathSegment(72), DrivingUtility.makeRightArcPathSegment(20, 105), DrivingUtility.makeLinePathSegment(132)
+       ),
+      new ParallelCommand(new IntakeCommand(999), new MagazineInCommand())
+    );
+
+    Command blueA = new RunWhileCommand(
+      new FollowPathCommand(false,
+       DrivingUtility.makeRightArcPathSegment(20, 18.5), DrivingUtility.makeLinePathSegment(144), DrivingUtility.makeLeftArcPathSegment(20, 86), 
+       DrivingUtility.makeLinePathSegment(96), DrivingUtility.makeRightArcPathSegment(20, 82), DrivingUtility.makeLinePathSegment(132)
+       ),
+       new ParallelCommand(new IntakeCommand(999), new MagazineInCommand())
+    );
+
+    Command blueB = new RunWhileCommand(
+      new FollowPathCommand(false,
+      DrivingUtility.makeRightArcPathSegment(20, 20), DrivingUtility.makeLinePathSegment(156), DrivingUtility.makeLeftArcPathSegment(20, 115), DrivingUtility.makeLinePathSegment(84), 
+      DrivingUtility.makeRightArcPathSegment(20, 80), DrivingUtility.makeLinePathSegment(84), DrivingUtility.makeLeftArcPathSegment(10, 80) 
+      ),
+      new ParallelCommand(new IntakeCommand(999), new MagazineInCommand())
+    );
+
 
     autoChooser.setDefaultOption("Do Nothing", doNothing);
     autoChooser.addOption("Cross Auto Line Forwards", crossAutoLineCommand);
@@ -275,6 +299,9 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("barrelRacingPathChallenge", barrelRacingPathChalenge);
     autoChooser.addOption("bouncePath", bouncePath);
     autoChooser.addOption("redA", redA);
+    autoChooser.addOption("redB", redB);
+    autoChooser.addOption("blueA", blueA);
+    autoChooser.addOption("blueB", blueB);
 
 
     CameraServer.getInstance().startAutomaticCapture();
