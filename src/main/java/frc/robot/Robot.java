@@ -254,32 +254,32 @@ public class Robot extends TimedRobot {
 
     Command redA = new RunWhileCommand(
       new FollowPathCommand(false,
-        DrivingUtility.makeLinePathSegment(24), DrivingUtility.makeRightArcPathSegment(60, 19), DrivingUtility.makeLinePathSegment(62), DrivingUtility.makeLeftArcPathSegment(1, 109),
-        DrivingUtility.makeLinePathSegment(90), DrivingUtility.makeRightArcPathSegment(5, 84.8), DrivingUtility.makeLinePathSegment(170)
+        DrivingUtility.makeLinePathSegment(24), DrivingUtility.makeRightArcPathSegment(20, 25), DrivingUtility.makeLinePathSegment(75), DrivingUtility.makeLeftArcPathSegment(20, 120),
+        DrivingUtility.makeLinePathSegment(55), DrivingUtility.makeRightArcPathSegment(20, 118.4), DrivingUtility.makeLinePathSegment(170)
       ),
       new ParallelCommand(new IntakeCommand(999), new MagazineInCommand())
     );
 
     Command redB = new RunWhileCommand(
       new FollowPathCommand(false,
-       DrivingUtility.makeLeftArcPathSegment(30, 12), DrivingUtility.makeLinePathSegment(60), DrivingUtility.makeRightArcPathSegment(30, 74), DrivingUtility.makeLinePathSegment(70),
-       DrivingUtility.makeLeftArcPathSegment(20, 92), DrivingUtility.makeLinePathSegment(72), DrivingUtility.makeRightArcPathSegment(20, 105), DrivingUtility.makeLinePathSegment(132)
+       DrivingUtility.makeLeftArcPathSegment(20, 23.5), DrivingUtility.makeLinePathSegment(55), DrivingUtility.makeRightArcPathSegment(20, 85), DrivingUtility.makeLinePathSegment(70),
+       DrivingUtility.makeLeftArcPathSegment(20, 130), DrivingUtility.makeLinePathSegment(90), DrivingUtility.makeRightArcPathSegment(20, 100), DrivingUtility.makeLinePathSegment(130)
        ),
       new ParallelCommand(new IntakeCommand(999), new MagazineInCommand())
     );
 
     Command blueA = new RunWhileCommand(
       new FollowPathCommand(false,
-       DrivingUtility.makeRightArcPathSegment(20, 18.5), DrivingUtility.makeLinePathSegment(144), DrivingUtility.makeLeftArcPathSegment(20, 86), 
-       DrivingUtility.makeLinePathSegment(96), DrivingUtility.makeRightArcPathSegment(20, 82), DrivingUtility.makeLinePathSegment(132)
+       DrivingUtility.makeRightArcPathSegment(1, 26.1), DrivingUtility.makeLinePathSegment(148), DrivingUtility.makeLeftArcPathSegment(5, 116.1), 
+       DrivingUtility.makeLinePathSegment(60), DrivingUtility.makeRightArcPathSegment(30, 116.1), DrivingUtility.makeLinePathSegment(52), DrivingUtility.makeLeftArcPathSegment(1, 26.1), DrivingUtility.makeLinePathSegment(60)
        ),
        new ParallelCommand(new IntakeCommand(999), new MagazineInCommand())
     );
 
     Command blueB = new RunWhileCommand(
       new FollowPathCommand(false,
-      DrivingUtility.makeRightArcPathSegment(20, 20), DrivingUtility.makeLinePathSegment(156), DrivingUtility.makeLeftArcPathSegment(20, 115), DrivingUtility.makeLinePathSegment(84), 
-      DrivingUtility.makeRightArcPathSegment(20, 80), DrivingUtility.makeLinePathSegment(84), DrivingUtility.makeLeftArcPathSegment(10, 80) 
+      DrivingUtility.makeRightArcPathSegment(20, 20), DrivingUtility.makeLinePathSegment(156), DrivingUtility.makeLeftArcPathSegment(20, 115), DrivingUtility.makeLinePathSegment(60), 
+      DrivingUtility.makeRightArcPathSegment(30, 8), DrivingUtility.makeLinePathSegment(84), DrivingUtility.makeLeftArcPathSegment(10, 80) 
       ),
       new ParallelCommand(new IntakeCommand(999), new MagazineInCommand())
     );
