@@ -278,8 +278,8 @@ public class Robot extends TimedRobot {
 
     Command blueB = new RunWhileCommand(
       new FollowPathCommand(false,
-      DrivingUtility.makeRightArcPathSegment(20, 20), DrivingUtility.makeLinePathSegment(156), DrivingUtility.makeLeftArcPathSegment(20, 115), DrivingUtility.makeLinePathSegment(60), 
-      DrivingUtility.makeRightArcPathSegment(30, 8), DrivingUtility.makeLinePathSegment(84), DrivingUtility.makeLeftArcPathSegment(10, 80) 
+      DrivingUtility.makeRightArcPathSegment(1, 17.2), DrivingUtility.makeLinePathSegment(129), DrivingUtility.makeLeftArcPathSegment(30, 107.2), DrivingUtility.makeLinePathSegment(6), 
+      DrivingUtility.makeRightArcPathSegment(30, 153), DrivingUtility.makeLinePathSegment(36), DrivingUtility.makeLeftArcPathSegment(30, 108), DrivingUtility.makeLinePathSegment(36) 
       ),
       new ParallelCommand(new IntakeCommand(999), new MagazineInCommand())
     );
