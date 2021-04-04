@@ -13,6 +13,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -122,6 +125,12 @@ public class Robot extends TimedRobot {
   File propertyDirectory;
   String finalThingy;
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+
+  Command redA;
+  Command redB;
+  Command blueA;
+  Command blueB;
+  Command GSCCommand;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -252,7 +261,7 @@ public class Robot extends TimedRobot {
       new FollowPathCommand(true, DrivingUtility.makeLeftArcPathSegment(42, 90))
     });
 
-    Command redA = new RunWhileCommand(
+    redA = new RunWhileCommand(
       new FollowPathCommand(false,
         DrivingUtility.makeLinePathSegment(24), DrivingUtility.makeRightArcPathSegment(20, 25), DrivingUtility.makeLinePathSegment(75), DrivingUtility.makeLeftArcPathSegment(20, 120),
         DrivingUtility.makeLinePathSegment(55), DrivingUtility.makeRightArcPathSegment(20, 118.4), DrivingUtility.makeLinePathSegment(170)
@@ -260,7 +269,7 @@ public class Robot extends TimedRobot {
       new ParallelCommand(new IntakeCommand(999), new MagazineInCommand())
     );
 
-    Command redB = new RunWhileCommand(
+    redB = new RunWhileCommand(
       new FollowPathCommand(false,
        DrivingUtility.makeLeftArcPathSegment(20, 23.5), DrivingUtility.makeLinePathSegment(55), DrivingUtility.makeRightArcPathSegment(20, 85), DrivingUtility.makeLinePathSegment(70),
        DrivingUtility.makeLeftArcPathSegment(20, 130), DrivingUtility.makeLinePathSegment(90), DrivingUtility.makeRightArcPathSegment(20, 100), DrivingUtility.makeLinePathSegment(130)
@@ -268,7 +277,7 @@ public class Robot extends TimedRobot {
       new ParallelCommand(new IntakeCommand(999), new MagazineInCommand())
     );
 
-    Command blueA = new RunWhileCommand(
+    blueA = new RunWhileCommand(
       new FollowPathCommand(false,
        DrivingUtility.makeRightArcPathSegment(1, 26.1), DrivingUtility.makeLinePathSegment(148), DrivingUtility.makeLeftArcPathSegment(5, 116.1), 
        DrivingUtility.makeLinePathSegment(60), DrivingUtility.makeRightArcPathSegment(30, 116.1), DrivingUtility.makeLinePathSegment(52), DrivingUtility.makeLeftArcPathSegment(1, 26.1), DrivingUtility.makeLinePathSegment(60)
@@ -276,14 +285,13 @@ public class Robot extends TimedRobot {
        new ParallelCommand(new IntakeCommand(999), new MagazineInCommand())
     );
 
-    Command blueB = new RunWhileCommand(
+    blueB = new RunWhileCommand(
       new FollowPathCommand(false,
       DrivingUtility.makeRightArcPathSegment(1, 17.2), DrivingUtility.makeLinePathSegment(129), DrivingUtility.makeLeftArcPathSegment(30, 107.2), DrivingUtility.makeLinePathSegment(6), 
       DrivingUtility.makeRightArcPathSegment(30, 153), DrivingUtility.makeLinePathSegment(36), DrivingUtility.makeLeftArcPathSegment(30, 108), DrivingUtility.makeLinePathSegment(36) 
       ),
       new ParallelCommand(new IntakeCommand(999), new MagazineInCommand())
     );
-
 
     autoChooser.setDefaultOption("Do Nothing", doNothing);
     autoChooser.addOption("Cross Auto Line Forwards", crossAutoLineCommand);
@@ -334,6 +342,52 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     super.disabledPeriodic();
     visionSubsystem.turnLimelightOff();
+    NetworkTable contours = NetworkTableInstance.getDefault().getTable("GRIP/vision2021");
+    double[] centerX = contours.getEntry("centerX").getDoubleArray(new double[]{});
+    double[] centerY = contours.getEntry("centerY").getDoubleArray(new double[]{});
+
+    double redAminX = 118;
+    double redAmaxX = 208;
+    double redBminX = 0;
+    double redBmaxX = 78;
+    double redMinY = 153;
+    double redMaxY = 194;
+    double blueAminX = 254;
+    double blueAmaxX = 355;
+    double blueBminX = 200;
+    double blueBmaxX = 301;
+    double blueMinY = 145;
+    double blueMaxY = 167;
+
+    if (centerX.length == centerY.length) {
+      
+      GSCCommand = null;
+
+      for(int i=0; i < centerX.length; i++){
+        double x = centerX[i];
+        double y = centerY[i];
+        if(x > redAminX && x < redAmaxX && y > redMinY && y < redMaxY){
+          GSCCommand = redA;
+          logger.info("Picked Red A!");
+        }else if(x > redBminX && x < redBmaxX && y > redMinY && y < redMaxY){
+          GSCCommand = redB;
+          logger.info("Picked Red B!");
+        }
+      }
+      if(GSCCommand == null){
+        for (int i=0; i < centerX.length; i++){
+          double x = centerX[i];
+          double y = centerY[i];
+          if(x > blueAminX && x < blueAmaxX && y > blueMinY && y < blueMaxY){
+            GSCCommand = blueA;
+            logger.info("Picked Blue A!");
+          }else if(x > blueBminX && x < blueBmaxX && y > blueMinY && y < blueMaxY){
+            GSCCommand = blueB;
+            logger.info("Picked Blue B!");
+          }
+        }
+      }
+    }  
   }
 
   /**
@@ -349,12 +403,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    autonomousCommand = new CommandRunner(
-      new SequentialCommand(
-        new TimerCommand(SmartDashboard.getNumber(AUTO_DELAY_TIME_NAME, 0)),
-        autoChooser.getSelected()
-      )
-    );
+    autonomousCommand = new CommandRunner(GSCCommand);
+    // autonomousCommand = new CommandRunner(
+    //   new SequentialCommand(
+    //     new TimerCommand(SmartDashboard.getNumber(AUTO_DELAY_TIME_NAME, 0)),
+    //     autoChooser.getSelected()
+    //   )
+    // );
   } //29 + 66 / 2 + 252
 
   /**
