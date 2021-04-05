@@ -286,9 +286,20 @@ public class Robot extends TimedRobot {
     );
 
     blueB = new RunWhileCommand(
-      new FollowPathCommand(false,
-      DrivingUtility.makeRightArcPathSegment(1, 17.2), DrivingUtility.makeLinePathSegment(129), DrivingUtility.makeLeftArcPathSegment(30, 107.2), DrivingUtility.makeLinePathSegment(6), 
-      DrivingUtility.makeRightArcPathSegment(30, 163), DrivingUtility.makeLinePathSegment(30), DrivingUtility.makeLeftArcPathSegment(30, 118), DrivingUtility.makeLinePathSegment(36) 
+      new SequentialCommand(
+        new FollowPathCommand(false,
+          DrivingUtility.makeRightArcPathSegment(1, 17.2), 
+          DrivingUtility.makeLinePathSegment(129), 
+          DrivingUtility.makeLeftArcPathSegment(30, 107.2), 
+          DrivingUtility.makeLinePathSegment(6),
+          DrivingUtility.makeLeftArcPathSegment(26, 90),
+          DrivingUtility.makeLinePathSegment(23), 
+          DrivingUtility.makeRightArcPathSegment(30, 90),
+          DrivingUtility.makeLinePathSegment(30)
+        ),
+        new FollowPathCommand(true, 
+          DrivingUtility.makeRightArcPathSegment(30, 90)
+        )
       ),
       new ParallelCommand(new IntakeCommand(999), new MagazineInCommand())
     );
@@ -346,18 +357,22 @@ public class Robot extends TimedRobot {
     double[] centerX = contours.getEntry("centerX").getDoubleArray(new double[]{});
     double[] centerY = contours.getEntry("centerY").getDoubleArray(new double[]{});
 
-    double redAminX = 118;
-    double redAmaxX = 208;
+    double redAminX = 164-50;
+    double redAmaxX = 164+50;
     double redBminX = 0;
-    double redBmaxX = 78;
-    double redMinY = 153;
-    double redMaxY = 194;
-    double blueAminX = 254;
-    double blueAmaxX = 355;
-    double blueBminX = 200;
-    double blueBmaxX = 301;
-    double blueMinY = 145;
-    double blueMaxY = 167;
+    double redBmaxX = 32+50;
+
+    double redMinY = 140-20;
+    double redMaxY = 140+20;
+
+    double blueAminX = 281-20;
+    double blueAmaxX = 281+20;
+    
+    double blueBminX = 237-20;
+    double blueBmaxX = 237+20;
+    
+    double blueMinY = 122-10;
+    double blueMaxY = 122+10;
 
     if (centerX.length == centerY.length) {
       
@@ -368,10 +383,10 @@ public class Robot extends TimedRobot {
         double y = centerY[i];
         if(x > redAminX && x < redAmaxX && y > redMinY && y < redMaxY){
           GSCCommand = redA;
-          logger.info("Picked Red A!");
+          // logger.info("Picked Red A!");
         }else if(x > redBminX && x < redBmaxX && y > redMinY && y < redMaxY){
           GSCCommand = redB;
-          logger.info("Picked Red B!");
+          // logger.info("Picked Red B!");
         }
       }
       if(GSCCommand == null){
@@ -380,10 +395,10 @@ public class Robot extends TimedRobot {
           double y = centerY[i];
           if(x > blueAminX && x < blueAmaxX && y > blueMinY && y < blueMaxY){
             GSCCommand = blueA;
-            logger.info("Picked Blue A!");
+            // logger.info("Picked Blue A!");
           }else if(x > blueBminX && x < blueBmaxX && y > blueMinY && y < blueMaxY){
             GSCCommand = blueB;
-            logger.info("Picked Blue B!");
+            // logger.info("Picked Blue B!");
           }
         }
       }
