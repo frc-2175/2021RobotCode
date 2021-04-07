@@ -263,8 +263,13 @@ public class Robot extends TimedRobot {
 
     redA = new RunWhileCommand(
       new FollowPathCommand(false,
-        DrivingUtility.makeLinePathSegment(24), DrivingUtility.makeRightArcPathSegment(20, 25), DrivingUtility.makeLinePathSegment(75), DrivingUtility.makeLeftArcPathSegment(20, 117),
-        DrivingUtility.makeLinePathSegment(55), DrivingUtility.makeRightArcPathSegment(20, 121.4), DrivingUtility.makeLinePathSegment(170)
+        DrivingUtility.makeLinePathSegment(24), 
+        DrivingUtility.makeRightArcPathSegment(20, 25), 
+        DrivingUtility.makeLinePathSegment(75), 
+        DrivingUtility.makeLeftArcPathSegment(20, 111.5),
+        DrivingUtility.makeLinePathSegment(55), 
+        DrivingUtility.makeRightArcPathSegment(20, 112), 
+        DrivingUtility.makeLinePathSegment(170)
       ),
       new ParallelCommand(new IntakeCommand(999), new MagazineInCommand())
     );
@@ -279,8 +284,14 @@ public class Robot extends TimedRobot {
 
     blueA = new RunWhileCommand(
       new FollowPathCommand(false,
-       DrivingUtility.makeRightArcPathSegment(1, 26.1), DrivingUtility.makeLinePathSegment(148), DrivingUtility.makeLeftArcPathSegment(5, 116.1), 
-       DrivingUtility.makeLinePathSegment(60), DrivingUtility.makeRightArcPathSegment(30, 116.1), DrivingUtility.makeLinePathSegment(52), DrivingUtility.makeLeftArcPathSegment(1, 26.1), DrivingUtility.makeLinePathSegment(60)
+       DrivingUtility.makeRightArcPathSegment(1, 26.1), 
+       DrivingUtility.makeLinePathSegment(148), 
+       DrivingUtility.makeLeftArcPathSegment(5, 110), 
+       DrivingUtility.makeLinePathSegment(60), 
+       DrivingUtility.makeRightArcPathSegment(30, 110), 
+       DrivingUtility.makeLinePathSegment(52), 
+       DrivingUtility.makeLeftArcPathSegment(1, 26), 
+       DrivingUtility.makeLinePathSegment(60)
        ),
        new ParallelCommand(new IntakeCommand(999), new MagazineInCommand())
     );
@@ -288,12 +299,12 @@ public class Robot extends TimedRobot {
     blueB = new RunWhileCommand(
       new SequentialCommand(
         new FollowPathCommand(false,
-          DrivingUtility.makeRightArcPathSegment(1, 17.2), 
+          DrivingUtility.makeRightArcPathSegment(1, 15), 
           DrivingUtility.makeLinePathSegment(129), 
-          DrivingUtility.makeLeftArcPathSegment(30, 107.2), 
+          DrivingUtility.makeLeftArcPathSegment(30, 105), 
           DrivingUtility.makeLinePathSegment(6),
-          DrivingUtility.makeLeftArcPathSegment(26, 90),
-          DrivingUtility.makeLinePathSegment(23), 
+          DrivingUtility.makeRightArcPathSegment(26, 90),
+          DrivingUtility.makeLinePathSegment(49), 
           DrivingUtility.makeRightArcPathSegment(30, 90),
           DrivingUtility.makeLinePathSegment(30)
         ),
@@ -357,22 +368,22 @@ public class Robot extends TimedRobot {
     double[] centerX = contours.getEntry("centerX").getDoubleArray(new double[]{});
     double[] centerY = contours.getEntry("centerY").getDoubleArray(new double[]{});
 
-    double redAminX = 164-50;
-    double redAmaxX = 164+50;
+    double redAminX = 169-50;
+    double redAmaxX = 169+50;
     double redBminX = 0;
-    double redBmaxX = 32+50;
+    double redBmaxX = 25+50;
 
-    double redMinY = 140-20;
-    double redMaxY = 140+20;
+    double redMinY = 143-10;
+    double redMaxY = 143+20;
 
-    double blueAminX = 281-20;
-    double blueAmaxX = 281+20;
+    double blueAminX = 276-20;
+    double blueAmaxX = 276+20;
     
-    double blueBminX = 237-20;
-    double blueBmaxX = 237+20;
+    double blueBminX = 233-20;
+    double blueBmaxX = 233+20;
     
-    double blueMinY = 122-10;
-    double blueMaxY = 122+10;
+    double blueMinY = 115-10;
+    double blueMaxY = 115+10;
 
     if (centerX.length == centerY.length) {
       
