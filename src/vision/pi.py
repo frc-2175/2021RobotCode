@@ -27,12 +27,12 @@ def process(img):
     
     biggestContour = None
     maxAreaSoFar = 0
-    for contour in contours: 
+    for contour in contours: #look through each contour and ...
         area = cv2.contourArea(contour)
         if area >= minArea:
             if area > maxAreaSoFar:
-                maxAreaSoFar = area
-                biggestContour = contour
+                maxAreaSoFar = area 
+                biggestContour = contour #find & designate the contour with the biggest area
     if biggestContour is None:
         return img, {}
     biggestContour = cv2.convexHull(biggestContour)
