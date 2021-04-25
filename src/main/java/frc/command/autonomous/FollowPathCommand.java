@@ -9,6 +9,12 @@ import frc.math.DrivingUtility.PathSegment;
 import frc.subsystem.DrivetrainSubsystem;
 
 public class FollowPathCommand extends Command {
+
+    public static interface Bulbasaur {
+        public void action(int currentDistance);
+    }
+
+    Bulbasaur bulbasaur;
     DrivetrainSubsystem drivetrainSubsystem = ServiceLocator.get(DrivetrainSubsystem.class);
     Path pathResult;
     DrivetrainSubsystem.PurePursuitResult purePursuitResult; 
@@ -17,6 +23,12 @@ public class FollowPathCommand extends Command {
     PathSegment[] pathSegments;
     public FollowPathCommand(boolean isBackwards, PathSegment... pathSegments) {
         this.pathSegments = pathSegments;
+        this.isBackwards = isBackwards;
+    }
+
+    public FollowPathCommand(boolean isBackwards, Bulbasaur bulbasaur, PathSegment... pathSegments) {
+        this.pathSegments = pathSegments;
+        this.bulbasaur = bulbasaur;
         this.isBackwards = isBackwards;
     }
 
@@ -36,6 +48,9 @@ public class FollowPathCommand extends Command {
 
     public void execute() {
         purePursuitResult = drivetrainSubsystem.purePursuit(pathResult, isBackwards);
+        if(bulbasaur != null){
+            this.bulbasaur.action(purePursuitResult.indexOfClosestPoint);
+        } 
     }
 
     public boolean isFinished() {

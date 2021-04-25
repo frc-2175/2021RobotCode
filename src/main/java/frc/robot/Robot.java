@@ -174,16 +174,33 @@ public class Robot extends TimedRobot {
 
     SequentialCommand doNothing = new SequentialCommand();
 
+    SequentialCommand bulbasaurTest = new SequentialCommand(
+      new FollowPathCommand(false, (int distance) -> {
+        if(distance >= 60) {
+          drivetrainSubsystem.setHighGear();
+        } else {
+          drivetrainSubsystem.setLowGear();
+        }
+      },
+      DrivingUtility.makeLinePathSegment(120)
+      )
+    );
+
      /*
     Start on the right side, shoot three balls
     Intake two balls from trench, and shoot
     */
+    
     SequentialCommand rightToTrench = new SequentialCommand(new Command[] {
       //Change all the "123", make robot in line with the trench
       //new AimCommand
       new ShootCommand(4, 4000),
       new ParallelCommand(new Command[] { 
-        new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(60.0)), //change later
+        new FollowPathCommand(false, (int distance) -> {
+          if (distance >= 36) {
+            drivetrainSubsystem.setHighGear();
+          }
+        }, DrivingUtility.makeLinePathSegment(60.0)), //change later
         new IntakeCommand(5)
       }),
       //new TurretCommand
@@ -332,6 +349,7 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("redB", redB);
     autoChooser.addOption("blueA", blueA);
     autoChooser.addOption("blueB", blueB);
+    autoChooser.addOption("bulbasaur test", bulbasaurTest);
 
 
     CameraServer.getInstance().startAutomaticCapture();
@@ -429,13 +447,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    autonomousCommand = new CommandRunner(GSCCommand);
-    // autonomousCommand = new CommandRunner(
-    //   new SequentialCommand(
-    //     new TimerCommand(SmartDashboard.getNumber(AUTO_DELAY_TIME_NAME, 0)),
-    //     autoChooser.getSelected()
-    //   )
-    // );
+    //autonomousCommand = new CommandRunner(GSCCommand);
+    autonomousCommand = new CommandRunner(
+      new SequentialCommand(
+        new TimerCommand(SmartDashboard.getNumber(AUTO_DELAY_TIME_NAME, 0)),
+        autoChooser.getSelected()
+      )
+    );
   } //29 + 66 / 2 + 252
 
   /**

@@ -1,4 +1,4 @@
-import static org.junit.Assert.assertEquals;
+/* import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -24,4 +24,4 @@ public class DrivetrainSubsystemTest {
         assertEquals(1, DrivetrainSubsystem.findGoalPoint(closestPointTestPath, new Vector(0,1), 1));
         
     }
-}
+} */
