@@ -44,8 +44,10 @@ public class ShooterSubsystem {
     private static final double INITIAL_TURRET_ROTATION_DEGREES = 30; 
 
     public ShooterSubsystem() {
-        shooterMotorMaster = new CANSparkMax(1, MotorType.kBrushless);
-        shooterMotorFollower = new CANSparkMax(2, MotorType.kBrushless);
+        shooterMotorMaster = new CANSparkMax(21, MotorType.kBrushless);
+        shooterMotorFollower = new CANSparkMax(22, MotorType.kBrushless);
+        shooterMotorMaster.restoreFactoryDefaults();
+        shooterMotorFollower.restoreFactoryDefaults();
         turretMotor = new WPI_TalonSRX(2); //not accurate
         hoodMotor = new WPI_VictorSPX(99); // get value!!
         hoodPiston = new Solenoid(3); 
@@ -66,9 +68,10 @@ public class ShooterSubsystem {
         turretPidController = new PIDController(tp, ti, td);
         shooterMotorMaster.setIdleMode(IdleMode.kCoast);
         shooterMotorFollower.setIdleMode(IdleMode.kCoast);
-        shooterMotorMaster.setInverted(true);
+        shooterMotorMaster.setInverted(false);
         turretMotor.setInverted(true);
         // shooterMotorFollower.setInverted(false);
+        
         shooterMotorFollower.follow(shooterMotorMaster, true);
         turretMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
         ServiceLocator.register(this);
@@ -83,6 +86,8 @@ public class ShooterSubsystem {
     public void periodic() {
         SmartDashboard.putNumber("flywheel speed (rpm)", getSpeedInRPM());
         SmartDashboard.putNumber("current turrent angle", getCurrentTurretAngle());
+        SmartDashboard.putNumber("manual speed", manualSpeed);
+
         turretPidController.updateTime(Timer.getFPGATimestamp());
         if (currentMode == Mode.PID) { //PID!!
             CANPIDController noah2 = shooterMotorMaster.getPIDController();
