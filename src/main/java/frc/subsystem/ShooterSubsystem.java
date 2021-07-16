@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.PIDController;
 import frc.ServiceLocator;
+import frc.math.MathUtility;
 
 public class ShooterSubsystem {
     
@@ -31,7 +32,7 @@ public class ShooterSubsystem {
     private double manualSpeed = 0;
     private double targetSpeed;
     private double goalAngle;
-    private static final double OVERSHOOTNESS = 100; //the amount to add to the target speed in bbspeed calculations!!!!!
+    private static final double OVERSHOOTNESS = 300; //the amount to add to the target speed in bbspeed calculations!!!!!
     private static final double MAX_RPM = 5620;
     private static final double BUFFER_ZONE = 100;
     private static final double TURRET_OUTPUT_GEAR_TEETH = 200.0; 
@@ -53,7 +54,7 @@ public class ShooterSubsystem {
         hoodPiston = new Solenoid(3); 
 
         double ti = 0;
-        double tp = 0.5/90.0;
+        double tp = 0.35/15.0;
         double td = 0;
 
         SmartDashboard.putNumber("turretpid i", ti);
@@ -86,6 +87,7 @@ public class ShooterSubsystem {
     public void periodic() {
         SmartDashboard.putNumber("flywheel speed (rpm)", getSpeedInRPM());
         SmartDashboard.putNumber("current turrent angle", getCurrentTurretAngle());
+        SmartDashboard.putNumber("turret goal angle", goalAngle);
         SmartDashboard.putNumber("manual speed", manualSpeed);
 
         turretPidController.updateTime(Timer.getFPGATimestamp());
@@ -150,13 +152,14 @@ public class ShooterSubsystem {
     }
 
     public void turretPIDToGoalAngle() {
-        double currentAngle = turretTicksToDegrees(turretMotor.getSelectedSensorPosition());
-        double output = turretPidController.pid(currentAngle, goalAngle);
+        double currentAngle = getCurrentTurretAngle();
+        double output = turretPidController.pid(currentAngle, goalAngle, 6);
+        output = Math.signum(output) * MathUtility.clamp(Math.abs(output), 0.1, 0.5);
         setTurretSpeed(output);
     }
 
-    public void setGoalAngle(double relativeGoalAngle) {
-        goalAngle = relativeGoalAngle + turretTicksToDegrees(turretMotor.getSelectedSensorPosition());
+    public void setGoalAngleRelativeToCurrent(double relativeGoalAngle) {
+        goalAngle = relativeGoalAngle + getCurrentTurretAngle();
     }
 
 

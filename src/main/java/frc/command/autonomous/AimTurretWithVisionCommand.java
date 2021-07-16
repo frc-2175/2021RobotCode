@@ -16,8 +16,7 @@ public class AimTurretWithVisionCommand extends Command {
     }
 
     public void init() {
-        shooterSubsystem.setGoalAngle(visionSubsystem.getLimelightHorizontalOffset());
-        SmartDashboard.putNumber("turret goal angle", visionSubsystem.getLimelightHorizontalOffset()); 
+        shooterSubsystem.setGoalAngleRelativeToCurrent(visionSubsystem.getLimelightHorizontalOffset()); 
     }
 
     public void execute() {
@@ -26,11 +25,11 @@ public class AimTurretWithVisionCommand extends Command {
 
     public boolean isFinished() {
         SmartDashboard.putNumber("angle from goal angle", shooterSubsystem.getAngleFromGoalAngle()); 
-       return shooterSubsystem.getAngleFromGoalAngle() < 1; 
+        return shooterSubsystem.getAngleFromGoalAngle() < 0.5; 
     }
 
     public void end() {
-        visionSubsystem.turnLimelightOff();
+        // visionSubsystem.turnLimelightOff();
         shooterSubsystem.setTurretSpeed(0);
     }
 

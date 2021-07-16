@@ -1,5 +1,7 @@
 package frc.command;
 
+import com.ctre.phoenix.Logger;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.ServiceLocator;
@@ -23,6 +25,7 @@ public class AutoFeedCommand extends Command {
 	@Override
 	public void init() {
         waiting = true;
+        System.out.println("AutoFeed init!");
 	}
 
 	@Override
@@ -34,7 +37,11 @@ public class AutoFeedCommand extends Command {
                 startTime = Timer.getFPGATimestamp();
             }
         } else {
-            if(Timer.getFPGATimestamp() - startTime < feederTime) {
+            double elapsedTime = Timer.getFPGATimestamp() - startTime;
+            if(elapsedTime < .5) {
+                feederSubsystem.stopFeeder();
+                magazineSubsystem.stopMagazine();
+            } else if(elapsedTime < .5 + feederTime) {
                 feederSubsystem.rollUp();
                 magazineSubsystem.stopMagazine();
             } else {

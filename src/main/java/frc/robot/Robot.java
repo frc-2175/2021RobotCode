@@ -28,6 +28,7 @@ import frc.command.ParallelCommand;
 import frc.command.ParallelRaceCommand;
 import frc.command.RunWhileCommand;
 import frc.command.SequentialCommand;
+import frc.command.autonomous.AimTurretWithVisionCommand;
 import frc.command.autonomous.FollowPathCommand;
 import frc.command.autonomous.IntakeCommand;
 import frc.command.autonomous.MagazineInCommand;
@@ -163,6 +164,8 @@ public class Robot extends TimedRobot {
       new LogField("ExampleSmartDashboard", 2175, Logger.SMART_DASHBOARD_TAG));
     propertyDirectory = Filesystem.getDeployDirectory();
     finalThingy = propertyDirectory.getAbsolutePath();
+
+    aimTurretWithVisionCommand = new CommandRunner(new AimTurretWithVisionCommand());
 
     SequentialCommand crossAutoLineCommand = new SequentialCommand(new Command[] {
       new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(170))
@@ -376,12 +379,12 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     logger.info("Robot program is disabled and ready.");
+    visionSubsystem.turnLimelightOff();
   }
 
   @Override 
   public void disabledPeriodic() {
     super.disabledPeriodic();
-    visionSubsystem.turnLimelightOff();
     NetworkTable contours = NetworkTableInstance.getDefault().getTable("GRIP/vision2021");
     double[] centerX = contours.getEntry("centerX").getDoubleArray(new double[]{});
     double[] centerY = contours.getEntry("centerY").getDoubleArray(new double[]{});
@@ -507,7 +510,7 @@ public class Robot extends TimedRobot {
       intakeSubsystem.intakeRollOut();
     } else if (gamepad.getRawButton(GAMEPAD_RIGHT_TRIGGER) || rightJoystick.getRawButton(2)) {
       intakeSubsystem.intakeRollIn();
-      magazineSubsystem.magazineRollIn();
+      //magazineSubsystem.magazineRollIn();
     } else {
       intakeSubsystem.stopIntake();
       magazineSubsystem.stopMagazine();
@@ -528,10 +531,17 @@ public class Robot extends TimedRobot {
     if( gamepad.getRawButton(GAMEPAD_X)) {
       if(gamepad.getRawButtonPressed(GAMEPAD_X)) {
         teleopAutoShootCommand.resetCommand();
+        aimTurretWithVisionCommand.resetCommand();
       }
+      aimTurretWithVisionCommand.runCommand();
       teleopAutoShootCommand.runCommand();
     } else {
+      aimTurretWithVisionCommand.endCommand();
       teleopAutoShootCommand.endCommand();
+
+      double manualSpeed = 0.5 * MathUtility.deadband(MathUtility.squareInputs(gamepad.getRawAxis(2)), .05);
+      SmartDashboard.putNumber("manual turrent speed", manualSpeed);
+      shooterSubsystem.setTurretSpeed(manualSpeed);
 
       // ✩ feeder roll ✩
       // if(gamepad.getRawButton(GAMEPAD_X)) {
@@ -557,7 +567,7 @@ public class Robot extends TimedRobot {
       shooterSubsystem.setTargetSpeed(SmartDashboard.getNumber(CLOSE_SHOT_RPM_NAME, 3000));
       shooterSubsystem.setMode(Mode.BangBang);
     } else if (gamepad.getRawButton(GAMEPAD_LEFT_BUMPER)) {
-      shooterSubsystem.setTargetSpeed(SmartDashboard.getNumber("speed goal()rpm??" , 4500));
+      shooterSubsystem.setTargetSpeed(SmartDashboard.getNumber("speed goal()rpm??" , 60000));
       shooterSubsystem.setMode(Mode.BangBang);
     //} else if (gamepad.getPOV() == POV_DOWN) {
       //shooterSubsystem.setMode(Mode.Manual);
@@ -567,6 +577,19 @@ public class Robot extends TimedRobot {
       shooterSubsystem.setManualSpeed(0);
     }
 
+    /*if (gamepad.getRawButton(GAMEPAD_START)) {
+      if (gamepad.getRawButtonPressed(GAMEPAD_START)) {
+        aimTurretWithVisionCommand.resetCommand();
+      }
+      aimTurretWithVisionCommand.runCommand();
+    } else {
+      aimTurretWithVisionCommand.endCommand();
+
+      double manualSpeed = 0.5 * MathUtility.deadband(MathUtility.squareInputs(gamepad.getRawAxis(2)), .05);
+      SmartDashboard.putNumber("manual turrent speed", manualSpeed);
+      shooterSubsystem.setTurretSpeed(manualSpeed);
+    }
+    */
     // ✩ shooter hood ✩
     if(gamepad.getRawButtonPressed(GAMEPAD_B)) {
       shooterSubsystem.toggleHoodAngle();
@@ -580,18 +603,16 @@ public class Robot extends TimedRobot {
     //   shooterSubsystem.turretPIDToGoalAngle();
     // } else {
     //   shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(Math.pow(gamepad.getRawAxis(2), 2), .05)); // squared inputs babey!!!
-    // }
-    
-    shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(MathUtility.squareInputs(gamepad.getRawAxis(2)), .05)); 
+    // } 
    
     // ✩ climbing subsystem ✩
-    if (gamepad.getRawButton(GAMEPAD_START)) {
-      climberSubsystem.climbUp();
-    } else if (leftJoystick.getRawButton(6)) { 
-      climberSubsystem.climbDown();
-    } else {
-      climberSubsystem.stopClimbing();
-    }
+    // if (gamepad.getRawButton(GAMEPAD_START)) {
+    //   climberSubsystem.climbUp();
+    // } else if (leftJoystick.getRawButton(6)) { 
+    //   climberSubsystem.climbDown();
+    // } else {
+    //   climberSubsystem.stopClimbing();
+    // }
 
     //✩ deploying hook ✩
     if (gamepad.getPOV() == POV_UP) {
